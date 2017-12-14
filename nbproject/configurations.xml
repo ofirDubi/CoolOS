@@ -8,6 +8,9 @@
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
+    <itemPath>gdt.cpp</itemPath>
+    <itemPath>gdt.h</itemPath>
+    <itemPath>types.h</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <projectmakefile>Makefile</projectmakefile>
@@ -32,6 +35,12 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="gdt.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="gdt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="types.h" ex="false" tool="3" flavor2="0">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
