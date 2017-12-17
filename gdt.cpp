@@ -3,6 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+//this is the Global Descriptor Table
+
 #include "gdt.h"
 #define _16BIT 65536
 
@@ -37,12 +39,12 @@ uint16_t GlobalDescriptorTable::getCodeSegmentSelector(){ //returns the code seg
     return (uint8_t*)&codeSegmentSelector - (uint8_t*)this;
 }
 
-GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint32_t flags ){
+GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t flags ){
     
     
     uint8_t* target = (uint8_t *)this;
     
-    if(limit < = _16BIT){ //limit is smaller then 16 bit
+    if(limit <= _16BIT){ //limit is smaller then 16 bit
         target[6] = 0x40; //16 bit mode
     } 
     else{
@@ -84,4 +86,11 @@ uint32_t GlobalDescriptorTable::SegmentDescriptor::Base(){
 uint32_t GlobalDescriptorTable::SegmentDescriptor::Limit(){
     uint8_t* target = (uint8_t *)this;
     uint32_t result = target[6] & 0xf;
+    result = ( result <<8 ) + target[1];
+    result = ( result <<8 ) + target[0];
+       
+    if((target[6]&0xc0) == 0xc0){
+         result = (result<<12) | 0xfff;
+    }
+   
 }

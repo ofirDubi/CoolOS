@@ -10,6 +10,14 @@
     </logicalFolder>
     <itemPath>gdt.cpp</itemPath>
     <itemPath>gdt.h</itemPath>
+    <itemPath>interrupts.cpp</itemPath>
+    <itemPath>interrupts.h</itemPath>
+    <itemPath>interruptstubs.s</itemPath>
+    <itemPath>keyboard.cpp</itemPath>
+    <itemPath>keyboard.h</itemPath>
+    <itemPath>port.cpp</itemPath>
+    <itemPath>port.h</itemPath>
+    <itemPath>test.cpp</itemPath>
     <itemPath>types.h</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
@@ -38,6 +46,22 @@
       <item path="gdt.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gdt.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="interrupts.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="interrupts.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="interruptstubs.s" ex="false" tool="4" flavor2="0">
+      </item>
+      <item path="keyboard.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="keyboard.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="port.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="port.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="test.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="types.h" ex="false" tool="3" flavor2="0">
       </item>
