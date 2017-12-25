@@ -7,17 +7,22 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/kernel.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/Makefile</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/port.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/port.h</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/gdt.h</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/types.h</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/interruptstubs.s</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/gdt.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/interrupts.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/interrupts.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/drivers/driver.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/port.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/keyboard.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/hardwarecommunication/port.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/hardwarecommunication/interrupts.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/drivers/keyboard.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/README.md</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/mouse.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/Makefile</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/common/types.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/hardwarecommunication/gdt.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/kernel.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/driver.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/interrupts.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/drivers/mouse.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/gdt.cpp</file>
         </group>
     </open-files>
 </project-private>

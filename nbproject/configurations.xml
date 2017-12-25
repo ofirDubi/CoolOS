@@ -8,6 +8,8 @@
       <itemPath>Makefile</itemPath>
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
+    <itemPath>driver.cpp</itemPath>
+    <itemPath>driver.h</itemPath>
     <itemPath>gdt.cpp</itemPath>
     <itemPath>gdt.h</itemPath>
     <itemPath>interrupts.cpp</itemPath>
@@ -43,6 +45,10 @@
           <preBuildCommand></preBuildCommand>
         </preBuild>
       </makefileType>
+      <item path="driver.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="driver.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="gdt.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="gdt.h" ex="false" tool="3" flavor2="0">
