@@ -18,7 +18,7 @@
 #include <common/types.h>
 #include <hardwarecommunication/interrupts.h>
 #include <hardwarecommunication/port.h>
-#include "driver.h"
+#include <drivers/driver.h>
 
 namespace coolOS{
     namespace drivers{

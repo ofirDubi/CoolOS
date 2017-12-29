@@ -23,6 +23,9 @@
     <itemPath>port.h</itemPath>
     <itemPath>test.cpp</itemPath>
     <itemPath>types.h</itemPath>
+    <itemPath>src/drivers/vga.cpp</itemPath>
+    <itemPath>include/drivers/vga.cpp</itemPath>
+    <itemPath>include/drivers/vga.h</itemPath>
   </logicalFolder>
   <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
   <projectmakefile>Makefile</projectmakefile>
@@ -55,6 +58,10 @@
       </item>
       <item path="gdt.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="include/drivers/vga.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/hardwarecommunication/pci.h"
             ex="false"
             tool="3"
@@ -73,6 +80,8 @@
       <item path="port.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="port.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hardwarecommunication/pci.cpp" ex="false" tool="1" flavor2="0">
       </item>
