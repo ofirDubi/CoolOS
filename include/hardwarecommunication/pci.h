@@ -22,6 +22,22 @@ namespace coolOS{
     namespace hardwarecommunication{
     
         
+        enum BaseAddressRegisterType{
+            MemoryMapping = 0,
+            InputOutput = 1
+        };
+        
+        //change to struct
+        class BaseAddressRegister{
+            
+        public:
+            bool prefetchable;
+            coolOS::common::uint8_t * address;
+            coolOS::common::uint32_t size;
+            BaseAddressRegisterType type;
+            
+        };
+        //maybe change to struct as well
         class PeripheralComponentInterconnectDeviceDescriptor {
         public:
             coolOS::common::uint32_t portBase;
@@ -61,11 +77,11 @@ namespace coolOS{
             void Write (common::uint16_t bus, common::uint16_t device, common::uint16_t function, common::uint32_t registeroffset, common::uint32_t value);
             bool DeviceHasFunctions (common::uint16_t bus, common::uint16_t device);
             
-            void SelectDrivers(coolOS::drivers::DriverManager* driveManager);
-            
+            void SelectDrivers(coolOS::drivers::DriverManager* driverManager, coolOS::hardwarecommunication::InterruptManager* interrupts);
             
             PeripheralComponentInterconnectDeviceDescriptor GetDeviceDescriptor(common::uint16_t bus, common::uint16_t device, common::uint16_t function);
-            
+            BaseAddressRegister GetBaseAddressRegister(common::uint16_t bus, common::uint16_t device, common::uint16_t function, coolOS::common::int16_t bar, InterruptManager * interrupManager); 
+            coolOS::drivers::Driver* GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, coolOS::hardwarecommunication::InterruptManager * interrupManager); 
         };
 
     }

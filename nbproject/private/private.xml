@@ -16,13 +16,13 @@
             <file>file:/home/ofir123dubi/Documents/CoolOS/README.md</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/mouse.h</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/Makefile</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/hardwarecommunication/pci.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/pci.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/include/common/types.h</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/include/hardwarecommunication/gdt.h</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/src/kernel.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/driver.h</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/interrupts.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/src/drivers/mouse.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/gdt.cpp</file>
         </group>
     </open-files>
 </project-private>
