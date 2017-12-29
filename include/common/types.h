@@ -27,6 +27,8 @@ namespace coolOS{
 
         typedef long int64_t;
         typedef unsigned long uint64_t;
+        
+        
     }
 
   

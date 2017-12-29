@@ -9,12 +9,17 @@
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
+#include <gui/desktop.h>
+#include <gui/window.h>
+
+
+//#define GRAPHICS_MODE
 
 using namespace coolOS;
 using namespace coolOS::common;
 using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
-
+using namespace coolOS::gui;
 
 void printf(char *str){
     
@@ -122,15 +127,27 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     
     printf("Initializing Hardware, Stage 1\n");
 
+     Desktop desktop (320, 200, RGB_BLUE);
     
     DriverManager drvManager;
     
+       
+#ifdef GRAPHICS_MODE
+        KeyboardDriver keyboard(&interrupts, &desktop);
+#else
         PrintfKeyBoardEventHandler kbhandler;
         KeyboardDriver keyboard(&interrupts, &kbhandler);
+#endif
         drvManager.AddDriver(&keyboard);
         
+       
+#ifdef GRAPHICS_MODE
+        MouseDriver mouse(&interrupts, &desktop);
+#else
         MouseToConsole mousehandler;
         MouseDriver mouse(&interrupts, &mousehandler);
+#endif
+        
         drvManager.AddDriver(&mouse);
         
         PeripheralComponentInterconnectController PCIController;
@@ -144,19 +161,21 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 
     printf("Initializing Hardware, Stage 3\n");
 
-    interrupts.Activate();
-    
+   
     //set vga
     vga.SetMode(320, 200, 8);
     
-    //draw blue rectangle
+    Window win1(&desktop, 10, 10, 20, 20, RGB_RED);
+    desktop.AddChild(&win1);
+    Window win2(&desktop, 40, 15, 30, 30, RGB_GREEN);
+    desktop.AddChild(&win2);
     
-    for(int32_t y = 0; y<200; y++){
-        for(int32_t x = 0; x<320; x++){
-            VideoGraphicsArray::RGB color = {0x00, 0x00, 0xA8};
-            vga.PutPixel(x,y,color);
-        }
+    interrupts.Activate();
+    
+    
+    
+    while(1){
+        desktop.Draw(&vga);
+  
     }
-    
-    while(1);
 }

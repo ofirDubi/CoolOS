@@ -16,6 +16,7 @@
 
 
 #include <common/types.h>
+#include <common/RGB.h>
 #include <hardwarecommunication/port.h>
 #include <drivers/driver.h>
 
@@ -23,14 +24,7 @@ namespace coolOS{
 
     namespace drivers{
          
-        class VideoGraphicsArray{
-        public:
-            typedef struct {
-                 coolOS::common::uint8_t r;
-                 coolOS::common::uint8_t g;
-                 coolOS::common::uint8_t b;
-
-            }RGB;
+        class VideoGraphicsArray{            
         protected:
             hardwarecommunication::Port<coolOS::common::uint8_t> miscPort;
             hardwarecommunication::Port<coolOS::common::uint8_t> crtcIndexPort;
@@ -47,7 +41,7 @@ namespace coolOS{
             void WriteRegisters(coolOS::common::uint8_t* registers);
             coolOS::common::uint8_t * GetFrameBufferSegment();
             
-            virtual coolOS::common::uint8_t GetColorIndex(RGB rgb);
+            virtual coolOS::common::uint8_t GetColorIndex(coolOS::common::RGB rgb);
             
         public:
             
@@ -59,10 +53,13 @@ namespace coolOS{
             
             virtual bool SetMode(coolOS::common::uint32_t width, coolOS::common::uint32_t height, coolOS::common::uint32_t colordepth);
             
-            virtual void PutPixel(coolOS::common::uint32_t x, coolOS::common::uint32_t y, RGB color);
+            virtual void PutPixel(coolOS::common::int32_t x, coolOS::common::int32_t y, coolOS::common::RGB color);
             
             //move to protected later
-            virtual void PutPixel(coolOS::common::uint32_t x, coolOS::common::uint32_t y, coolOS::common::uint8_t colorIndex);
+            virtual void PutPixel(coolOS::common::int32_t x, coolOS::common::int32_t y, coolOS::common::uint8_t colorIndex);
+            
+            virtual void FillRectangle(coolOS::common::int32_t x, coolOS::common::int32_t y, coolOS::common::uint32_t w,
+                                        coolOS::common::uint32_t h, coolOS::common::RGB color);
 
         };
         
