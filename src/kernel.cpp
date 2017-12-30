@@ -11,7 +11,7 @@
 #include <drivers/vga.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
-
+#include <multitasking.h>
 
 //#define GRAPHICS_MODE
 
@@ -118,17 +118,40 @@ public:
     }
 
 };
+
+
+void taskA(){
+    
+        printf("A");
+    
+}
+
+void taskB(){
+    
+        printf("B");
+    
+    
+}
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //maybe irelevent
     
     printf("Hello world\n");
     
     GlobalDescriptorTable gdt;
-    InterruptManager interrupts(&gdt);
+    
+    TaskManager taskManager;
+    
+    Task task1(&gdt, taskA);
+    Task task2(&gdt, taskB);
+    
+    taskManager.AddTask(&task1);
+    taskManager.AddTask(&task2);
+    
+    InterruptManager interrupts(0x20,&gdt, &taskManager);
     
     printf("Initializing Hardware, Stage 1\n");
-
+#ifdef GRAPHICS_MODE
      Desktop desktop (320, 200, RGB_BLUE);
-    
+#endif
     DriverManager drvManager;
     
        
@@ -163,19 +186,20 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 
    
     //set vga
+#ifdef GRAPHICS_MODE
     vga.SetMode(320, 200, 8);
-    
     Window win1(&desktop, 10, 10, 20, 20, RGB_RED);
     desktop.AddChild(&win1);
     Window win2(&desktop, 40, 15, 30, 30, RGB_GREEN);
     desktop.AddChild(&win2);
-    
+#endif
     interrupts.Activate();
     
     
     
     while(1){
+#ifdef GRAPHICS_MODE
         desktop.Draw(&vga);
-  
+#endif
     }
 }

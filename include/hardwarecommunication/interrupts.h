@@ -17,6 +17,7 @@
 #include <common/types.h>
 #include <hardwarecommunication/port.h>
 #include <gdt.h>
+#include <multitasking.h>
 
 namespace coolOS{
     namespace hardwarecommunication{
@@ -42,6 +43,10 @@ namespace coolOS{
     protected:
 
         static InterruptManager * ActiveInterruptManager;
+        TaskManager *taskManager; //pointer to the task manager
+        
+        coolOS::common::uint16_t hardwareInterruptOffset;
+        
         InterruptHandler * handlers[256]; //a pointer for each interrupt
 
         struct GateDescriptor{
@@ -76,7 +81,7 @@ namespace coolOS{
 
     public:
 
-        InterruptManager(GlobalDescriptorTable * gdt);
+        InterruptManager(coolOS::common::uint16_t hardwareInterruptOffset, GlobalDescriptorTable * gdt, coolOS::TaskManager* taskManager);
         ~InterruptManager();
 
         void Activate();

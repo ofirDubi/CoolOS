@@ -67,16 +67,19 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
     
 
     
-InterruptManager::InterruptManager(GlobalDescriptorTable * gdt)
+InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescriptorTable * gdt, TaskManager* taskManager)
     :   picMasterCommand(0x20),
         picMasterData(0x21),
         picSlaveCommand(0xA0),
         picSlaveData(0xA1)
 {
     
+    this->taskManager = taskManager;
+    this->hardwareInterruptOffset = hardwareInterruptOffset;
     uint16_t CodeSegment = gdt->getCodeSegmentSelector();
-    const uint8_t IDT_INTERRUPT_GATE = 0xE; //interrupt gate, not trap gate or task gate
     
+    
+    const uint8_t IDT_INTERRUPT_GATE = 0xE; //interrupt gate, not trap gate or task gate
     for(uint16_t i=0; i<256; i++){
         
         handlers[i] = 0;
@@ -151,13 +154,21 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t e
         printf("UNHANDLED INTERRUPT 0x");
         printfHex(interruptNumber);
     }
+    
+    if(interruptNumber == hardwareInterruptOffset){ //timer interrupt
+        esp = (uint32_t)taskManager->Schedule((CPUState*)esp); //TODO: fix datatype from uint32 to cpustate
+    }
+    
     //answer the interrupt, so new interrupts can come 
-    if(0x20 <= interruptNumber && interruptNumber < 0x30 ){ //if it is a hardware interrupt
+    if(hardwareInterruptOffset <= interruptNumber && interruptNumber < hardwareInterruptOffset +16 ){ //if it is a hardware interrupt
         
         picMasterCommand.SlowWrite(0x20);
         if(0x28 <= interruptNumber){ //if the interrupt came from slave pic
             picSlaveCommand.SlowWrite(0x20);
         }
     }
+    
+    
+    
     return esp;
 }

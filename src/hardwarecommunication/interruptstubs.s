@@ -18,6 +18,7 @@ _ZN6coolOS21hardwarecommunication16InterruptManager16HandleException\num\()Ev:
 .global _ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev #check this line
 _ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev:
     movb $\num + IRQ_BASE, (interruptnumber) #what is IRQ_Base
+    push $0 #push error for CPUStatus struct
     jmp int_bottom
 .endm
 
@@ -29,13 +30,21 @@ HandleInterruptRequest 0x0C
 
 int_bottom:
     #save all the registers
-    pusha
-    pushl %ds
-    pushl %es
-    pushl %fs
-    pushl %gs
+    #pusha
+    #pushl %ds
+    #pushl %es
+    #pushl %fs
+    #pushl %gs
     
-    
+    pushl %ebp
+    pushl %edi
+    pushl %esi
+
+    pushl %edx
+    pushl %ecx
+    pushl %ebx
+    pushl %eax
+
     pushl %esp
     push (interruptnumber)
     call _ZN6coolOS21hardwarecommunication16InterruptManager15handleInterruptEhj
@@ -43,12 +52,25 @@ int_bottom:
     movl %eax, %esp
     
     #restore all the registers
-    popl %gs
-    popl %fs
-    popl %es
-    popl %ds
-    popa
     
+    popl %eax
+    popl %ebx
+    popl %ecx
+    popl %edx
+
+
+    popl %esi
+    popl %edi
+    popl %ebp
+    
+    #popl %gs
+    #popl %fs
+    #popl %es
+    #popl %ds
+    #popa
+    
+    add $4, %esp #pop the error value we pushed
+
 .global __ZN6coolOS21hardwarecommunication16InterruptManager15InterruptIgnoreEv
 _ZN6coolOS21hardwarecommunication16InterruptManager22IgnoreInterruptRequestEv:
 
