@@ -19,6 +19,8 @@
     <itemPath>interruptstubs.s</itemPath>
     <itemPath>keyboard.cpp</itemPath>
     <itemPath>keyboard.h</itemPath>
+    <itemPath>src/memorymanegment.cpp</itemPath>
+    <itemPath>include/memorymanegment.h</itemPath>
     <itemPath>src/multitasking.cpp</itemPath>
     <itemPath>include/multitasking.h</itemPath>
     <itemPath>src/hardwarecommunication/pci.cpp</itemPath>
@@ -75,6 +77,8 @@
             tool="3"
             flavor2="0">
       </item>
+      <item path="include/memorymanegment.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/multitasking.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="interrupts.cpp" ex="false" tool="1" flavor2="0">
@@ -94,6 +98,8 @@
       <item path="src/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hardwarecommunication/pci.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/memorymanegment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
       </item>

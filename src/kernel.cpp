@@ -133,7 +133,19 @@ void taskB(){
     }
     
     
+
 }
+typedef void (*constructor)();
+extern "c" constructor* start_ctors;
+extern "c" constructor* end_ctors;
+extern "c" coid callConstructors(){
+    //iterate through start_ctors to end_ctors
+    for(constructor* i = &start_ctors; i != end_ctors; i++){
+        (*i)(); //calls the function
+    }
+}
+
+
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //maybe irelevent
     
     printf("Hello world\n");
