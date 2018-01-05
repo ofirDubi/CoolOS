@@ -80,17 +80,18 @@ class MouseToConsole : public MouseEventHandler{
     int8_t x, y;
 public:
     MouseToConsole(){
-    static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
+        
+        static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
 
-    x=40;
-    y=12;
-    //initiate the cursor to values x=40 and y=12
-    VideoMemory[80*y +x] =  ((VideoMemory[80*y+x] & 0xF000) >> 4) 
-                                | ((VideoMemory[80*y+x] & 0x0F00) << 4) 
-                                | ((VideoMemory[80*y+x] & 0x00FF));
+        x=40;
+        y=12;
+        //initiate the cursor to values x=40 and y=12
+        VideoMemory[80*y +x] =  (VideoMemory[80*y+x] & 0xF000) >> 4 
+                                    | (VideoMemory[80*y+x] & 0x0F00) << 4 
+                                    | (VideoMemory[80*y+x] & 0x00FF);
     }
     
-    void OnMouseMove(int8_t x_offset, int8_t y_offset){
+    void OnMouseMove(int x_offset, int y_offset){
         static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
 
         VideoMemory[80*y +x] =  ((VideoMemory[80*y+x] & 0xF000) >> 4) 
@@ -121,14 +122,15 @@ public:
 
 
 void taskA(){
-    
-        printf("A");
-    
+    while(true){
+      //  printf("A");
+    }
 }
 
 void taskB(){
-    
-        printf("B");
+    while(true){
+        
+    }
     
     
 }
@@ -193,7 +195,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     Window win2(&desktop, 40, 15, 30, 30, RGB_GREEN);
     desktop.AddChild(&win2);
 #endif
-    interrupts.Activate();
+   interrupts.Activate();
     
     
     

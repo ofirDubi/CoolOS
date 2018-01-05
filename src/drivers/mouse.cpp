@@ -11,6 +11,7 @@ using namespace coolOS::common;
 using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 
+void printf(char *);
 
 #define INIT_X 40
 #define INIT_Y 12
@@ -30,6 +31,7 @@ void MouseEventHandler::OnMouseUp(uint8_t button){
     
 }
 void MouseEventHandler::OnMouseMove(int x, int y){
+    printf("bad mouse move ");
     
 }
 
@@ -49,6 +51,9 @@ void MouseDriver::Activate(){
     
     offset = 0;
     buttons = 0;
+    if(handler != 0){
+        handler->OnActivate();
+    }
     
     commandport.Write(0xAB); //tells the PiC to start using mouse interrupts - check that in OSdev
     commandport.Write(0x20); // going to set current state
@@ -64,7 +69,6 @@ void MouseDriver::Activate(){
     dataport.Read();   
 }
 
-void printf(char *);
 
 uint32_t MouseDriver::HandleInterrupt(uint32_t esp){
     
@@ -85,13 +89,11 @@ uint32_t MouseDriver::HandleInterrupt(uint32_t esp){
      * 
      */
     
-    static int8_t x =INIT_X,y=INIT_Y;
-    static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
-    
+  
     if(offset ==0){
         if(buffer[1] !=0 || buffer[2] != 0 ){
-            
-            handler->OnMouseMove(((int8_t)buffer[1]), - ((int8_t)buffer[2]));
+       //     printf("calling onMouseMove");
+            handler->OnMouseMove((int8_t)buffer[1], - ((int8_t)buffer[2]));
             
         } 
        

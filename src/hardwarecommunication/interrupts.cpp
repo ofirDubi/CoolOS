@@ -48,19 +48,20 @@ InterruptManager * InterruptManager::ActiveInterruptManager = 0;
 
 
 void InterruptManager::SetInterruptDescriptorTableEntry(
-        uint8_t interruptNumber,
+        uint8_t interrupt,
         uint16_t codeSegmentSelectorOffset,
         void (*handler)(),  //the location of the handler function
         uint8_t DescriptorPrivilegLevel,
         uint8_t DescriptorType){
     
-    const uint8_t IDT_DESC_PRESENT = 0x80;
     
-    interruptDescriptorTable[interruptNumber].handlerAddressLowBits = ((uint32_t)handler) & 0xffff;
-    interruptDescriptorTable[interruptNumber].handlerAddresshighBits = (((uint32_t)handler) >> 16) & 0xffff; 
-    interruptDescriptorTable[interruptNumber].gdt_codeSegmentSelector = codeSegmentSelectorOffset;
-    interruptDescriptorTable[interruptNumber].access = IDT_DESC_PRESENT | DescriptorType | ((DescriptorPrivilegLevel&3) << 5);
-    interruptDescriptorTable[interruptNumber].reserved = 0;
+    interruptDescriptorTable[interrupt].handlerAddressLowBits = ((uint32_t)handler) & 0xffff;
+    interruptDescriptorTable[interrupt].handlerAddresshighBits = (((uint32_t)handler) >> 16) & 0xffff; 
+    interruptDescriptorTable[interrupt].gdt_codeSegmentSelector = codeSegmentSelectorOffset;
+    
+    const uint8_t IDT_DESC_PRESENT = 0x80;
+    interruptDescriptorTable[interrupt].access = IDT_DESC_PRESENT | ((DescriptorPrivilegLevel&3) << 5)| DescriptorType ;
+    interruptDescriptorTable[interrupt].reserved = 0;
 
     
 }
@@ -76,27 +77,65 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescri
     
     this->taskManager = taskManager;
     this->hardwareInterruptOffset = hardwareInterruptOffset;
-    uint16_t CodeSegment = gdt->getCodeSegmentSelector();
+    uint32_t CodeSegment = gdt->getCodeSegmentSelector();
     
     
     const uint8_t IDT_INTERRUPT_GATE = 0xE; //interrupt gate, not trap gate or task gate
-    for(uint16_t i=0; i<256; i++){
+    for(uint8_t i=255; i>0; --i){
         
+       
+        SetInterruptDescriptorTableEntry(i, CodeSegment, &InterruptIgnore, 0, IDT_INTERRUPT_GATE);
         handlers[i] = 0;
-        SetInterruptDescriptorTableEntry(i, CodeSegment, &IgnoreInterruptRequest, 0, IDT_INTERRUPT_GATE);
         
     }
     
-    SetInterruptDescriptorTableEntry(0x20, CodeSegment, &HandleInterruptRequest0x00, 0, IDT_INTERRUPT_GATE);
-    SetInterruptDescriptorTableEntry(0x21, CodeSegment, &HandleInterruptRequest0x01, 0, IDT_INTERRUPT_GATE);
-    SetInterruptDescriptorTableEntry(0x2C, CodeSegment, &HandleInterruptRequest0x0C, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0, CodeSegment, &InterruptIgnore, 0, IDT_INTERRUPT_GATE);
+    handlers[0] = 0;
+   
+    SetInterruptDescriptorTableEntry(0x00, CodeSegment, &HandleException0x00, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x01, CodeSegment, &HandleException0x01, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x02, CodeSegment, &HandleException0x02, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x03, CodeSegment, &HandleException0x03, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x04, CodeSegment, &HandleException0x04, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x05, CodeSegment, &HandleException0x05, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x06, CodeSegment, &HandleException0x06, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x07, CodeSegment, &HandleException0x07, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x08, CodeSegment, &HandleException0x08, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x09, CodeSegment, &HandleException0x09, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0A, CodeSegment, &HandleException0x0A, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0B, CodeSegment, &HandleException0x0B, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0C, CodeSegment, &HandleException0x0C, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0D, CodeSegment, &HandleException0x0D, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0E, CodeSegment, &HandleException0x0E, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x0F, CodeSegment, &HandleException0x0F, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x10, CodeSegment, &HandleException0x10, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x11, CodeSegment, &HandleException0x11, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x12, CodeSegment, &HandleException0x12, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(0x13, CodeSegment, &HandleException0x13, 0, IDT_INTERRUPT_GATE);
+
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x00, CodeSegment, &HandleInterruptRequest0x00, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x01, CodeSegment, &HandleInterruptRequest0x01, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x02, CodeSegment, &HandleInterruptRequest0x02, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x03, CodeSegment, &HandleInterruptRequest0x03, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x04, CodeSegment, &HandleInterruptRequest0x04, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x05, CodeSegment, &HandleInterruptRequest0x05, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x06, CodeSegment, &HandleInterruptRequest0x06, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x07, CodeSegment, &HandleInterruptRequest0x07, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x08, CodeSegment, &HandleInterruptRequest0x08, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x09, CodeSegment, &HandleInterruptRequest0x09, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0A, CodeSegment, &HandleInterruptRequest0x0A, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0B, CodeSegment, &HandleInterruptRequest0x0B, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0C, CodeSegment, &HandleInterruptRequest0x0C, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0D, CodeSegment, &HandleInterruptRequest0x0D, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0E, CodeSegment, &HandleInterruptRequest0x0E, 0, IDT_INTERRUPT_GATE);
+    SetInterruptDescriptorTableEntry(hardwareInterruptOffset + 0x0F, CodeSegment, &HandleInterruptRequest0x0F, 0, IDT_INTERRUPT_GATE);
 
     
     picMasterCommand.SlowWrite(0x11);
     picSlaveCommand.SlowWrite(0x11);
     
-    picMasterData.SlowWrite(0x20); //add 20 to the interrupt you get
-    picSlaveData.SlowWrite(0x28); //add 28 to the interrupt you get - every pic can use 8 interrupts
+    picMasterData.SlowWrite(hardwareInterruptOffset); //add hardwareInterruptOffset to the interrupt you get
+    picSlaveData.SlowWrite(hardwareInterruptOffset + 8); //add hardwareInterruptOffset+8 to the interrupt you get - every pic can use 8 interrupts
     
     picMasterData.SlowWrite(0x04); // tells the master that he is the master
     picSlaveData.SlowWrite(0x02); // tells the slave that he is the slave
@@ -106,6 +145,7 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescri
     
     picMasterData.SlowWrite(0x00); 
     picSlaveData.SlowWrite(0x00); 
+    
     interruptDescriptorTablePointer idt;
     idt.size = 256 * sizeof(GateDescriptor) -1;
     idt.base = (uint32_t)interruptDescriptorTable;
@@ -115,7 +155,7 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescri
 }
 
 InterruptManager::~InterruptManager(){
-    
+    Deactivate();
 }
 
 void InterruptManager::Activate(){
@@ -129,7 +169,6 @@ void InterruptManager::Activate(){
 
 void InterruptManager::Deactivate(){
     if(ActiveInterruptManager == this){
-
     
     ActiveInterruptManager = 0;
     asm("cli"); //clear interrupts 
@@ -137,33 +176,38 @@ void InterruptManager::Deactivate(){
     }
 }
 
-uint32_t InterruptManager::handleInterrupt(uint8_t interruptNumber, uint32_t esp){
+uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp){
     if(ActiveInterruptManager != 0){
-        return ActiveInterruptManager->DoHandleInterrupt(interruptNumber, esp);
+        return ActiveInterruptManager->DoHandleInterrupt(interrupt, esp);
     }
     return esp;
 }
 
-uint32_t InterruptManager::DoHandleInterrupt(uint8_t interruptNumber, uint32_t esp){
+uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp){
     
-    
-    if(handlers[interruptNumber] != 0){
-        esp = handlers[interruptNumber]->HandleInterrupt(esp);
+    /*if(interrupt != hardwareInterruptOffset){ //don't print for hardware clock interrupt
+        printf("received interrupt 0x");
+        printfHex(interrupt);
+    }*/
+    if(handlers[interrupt] != 0){
+        
+        esp = handlers[interrupt]->HandleInterrupt(esp);
     }
-    else if(interruptNumber != 0x20){ //don't print for hardware clock interrupt
+    else if(interrupt != hardwareInterruptOffset){ //don't print for hardware clock interrupt
         printf("UNHANDLED INTERRUPT 0x");
-        printfHex(interruptNumber);
+        printfHex(interrupt);
     }
     
-    if(interruptNumber == hardwareInterruptOffset){ //timer interrupt
+    if(interrupt == hardwareInterruptOffset){ //timer interrupt
+       // printf("************************ calling task *******************");
         esp = (uint32_t)taskManager->Schedule((CPUState*)esp); //TODO: fix datatype from uint32 to cpustate
     }
     
     //answer the interrupt, so new interrupts can come 
-    if(hardwareInterruptOffset <= interruptNumber && interruptNumber < hardwareInterruptOffset +16 ){ //if it is a hardware interrupt
+    if(hardwareInterruptOffset <= interrupt && interrupt < hardwareInterruptOffset +16 ){ //if it is a hardware interrupt
         
         picMasterCommand.SlowWrite(0x20);
-        if(0x28 <= interruptNumber){ //if the interrupt came from slave pic
+        if(hardwareInterruptOffset +8 <= interrupt){ //if the interrupt came from slave pic
             picSlaveCommand.SlowWrite(0x20);
         }
     }

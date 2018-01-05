@@ -30,7 +30,7 @@ namespace coolOS{
         };
         class DriverManager{
         private:
-            Driver* drivers[255];
+            Driver* drivers[265];
             int numDrivers;
 
         public:
