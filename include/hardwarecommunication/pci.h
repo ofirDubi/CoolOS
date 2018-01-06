@@ -18,6 +18,9 @@
 #include <drivers/driver.h>
 #include <common/types.h>
 #include <hardwarecommunication/interrupts.h>
+#include <memorymanagment.h>
+
+
 namespace coolOS{
     namespace hardwarecommunication{
     

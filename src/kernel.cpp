@@ -11,6 +11,7 @@
 #include <drivers/vga.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
+#include <memorymanagment.h>
 #include <multitasking.h>
 
 //#define GRAPHICS_MODE
@@ -136,13 +137,12 @@ void taskB(){
 
 }
 typedef void (*constructor)();
-extern "c" constructor* start_ctors;
-extern "c" constructor* end_ctors;
-extern "c" coid callConstructors(){
-    //iterate through start_ctors to end_ctors
-    for(constructor* i = &start_ctors; i != end_ctors; i++){
-        (*i)(); //calls the function
-    }
+extern "C" constructor start_ctors;
+extern "C" constructor end_ctors;
+extern "C" void callConstructors()
+{
+    for(constructor* i = &start_ctors; i != &end_ctors; i++)
+        (*i)();
 }
 
 
@@ -152,14 +152,33 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     
     GlobalDescriptorTable gdt;
     
-    TaskManager taskManager;
+    //the size of the ram
+    uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
+    size_t heap = 10*1024*1024; //10 MB
+    MemoryManager memoryManager(heap, (*memupper)*1024 - heap - 10*1024);
     
+    printf("heap: 0x");
+    printfHex((heap >> 24) & 0xff);
+    printfHex((heap >> 16) & 0xff);
+    printfHex((heap >> 8) & 0xff);
+    printfHex((heap) & 0xff);
+    void * allocated = memoryManager.malloc(1024);
+    
+    printf("\nallocated: 0x");
+    printfHex(((size_t)allocated >> 24) & 0xff);
+    printfHex(((size_t)allocated >> 16) & 0xff);
+    printfHex(((size_t)allocated >> 8) & 0xff);
+    printfHex(((size_t)allocated) & 0xff);
+    printf("\n");
+    
+    TaskManager taskManager;
+    /*
     Task task1(&gdt, taskA);
     Task task2(&gdt, taskB);
     
     taskManager.AddTask(&task1);
     taskManager.AddTask(&task2);
-    
+    */
     InterruptManager interrupts(0x20,&gdt, &taskManager);
     
     printf("Initializing Hardware, Stage 1\n");
