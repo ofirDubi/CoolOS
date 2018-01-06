@@ -11,15 +11,14 @@
  * Created on December 25, 2017, 10:48 AM
  */
 
-#ifndef __COOLlOS__HARDWARECOMMUNICATION__PCI_H
-#define __coolOS__HARDWARECOMMUNICATION__PCI_H
+#ifndef __COOLOS__HARDWARECOMMUNICATION__PCI_H
+#define __COOLOS__HARDWARECOMMUNICATION__PCI_H
 
 #include <hardwarecommunication/port.h>
 #include <drivers/driver.h>
 #include <common/types.h>
 #include <hardwarecommunication/interrupts.h>
 #include <memorymanagment.h>
-
 
 namespace coolOS{
     namespace hardwarecommunication{

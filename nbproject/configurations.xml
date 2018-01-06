@@ -9,6 +9,8 @@
       <itemPath>nbproject/private/launcher.properties</itemPath>
     </logicalFolder>
     <itemPath>include/common/RGB.h</itemPath>
+    <itemPath>src/drivers/amd_am79c973.cpp</itemPath>
+    <itemPath>include/drivers/amd_am79c973.h</itemPath>
     <itemPath>driver.cpp</itemPath>
     <itemPath>driver.h</itemPath>
     <itemPath>gdt.cpp</itemPath>
@@ -19,8 +21,8 @@
     <itemPath>interruptstubs.s</itemPath>
     <itemPath>keyboard.cpp</itemPath>
     <itemPath>keyboard.h</itemPath>
-    <itemPath>src/memorymanegment.cpp</itemPath>
-    <itemPath>include/memorymanegment.h</itemPath>
+    <itemPath>src/memorymanagment.cpp</itemPath>
+    <itemPath>include/memorymanagment.h</itemPath>
     <itemPath>src/multitasking.cpp</itemPath>
     <itemPath>include/multitasking.h</itemPath>
     <itemPath>src/hardwarecommunication/pci.cpp</itemPath>
@@ -68,6 +70,8 @@
       </item>
       <item path="include/common/graphicscontext.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/drivers/amd_am79c973.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="include/drivers/vga.h" ex="false" tool="3" flavor2="0">
@@ -77,7 +81,7 @@
             tool="3"
             flavor2="0">
       </item>
-      <item path="include/memorymanegment.h" ex="false" tool="3" flavor2="0">
+      <item path="include/memorymanagment.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/multitasking.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -95,11 +99,13 @@
       </item>
       <item path="port.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="src/drivers/amd_am79c973.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/hardwarecommunication/pci.cpp" ex="false" tool="1" flavor2="0">
       </item>
-      <item path="src/memorymanegment.cpp" ex="false" tool="1" flavor2="0">
+      <item path="src/memorymanagment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
       </item>

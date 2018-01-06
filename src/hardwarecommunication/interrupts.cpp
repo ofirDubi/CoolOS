@@ -154,6 +154,10 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescri
     
 }
 
+uint16_t InterruptManager::getHardwareInterruptOffset(){
+    return this->hardwareInterruptOffset;
+}
+
 InterruptManager::~InterruptManager(){
     Deactivate();
 }

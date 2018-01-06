@@ -132,7 +132,7 @@ namespace coolOS{
 
         InterruptManager(coolOS::common::uint16_t hardwareInterruptOffset, GlobalDescriptorTable * gdt, coolOS::TaskManager* taskManager);
         ~InterruptManager();
-        coolOS::common::uint16_t HardwareInterruptOffset;
+        coolOS::common::uint16_t getHardwareInterruptOffset();
         void Activate();
         void Deactivate();
      

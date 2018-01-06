@@ -10,6 +10,7 @@ objects = obj/loader.o \
 	  obj/hardwarecommunication/interrupts.o \
 	  obj/hardwarecommunication/interruptstubs.o \
 	  obj/multitasking.o \
+	  obj/drivers/amd_am79c973.o \
 	  obj/hardwarecommunication/pci.o \
 	  obj/drivers/keyboard.o \
 	  obj/drivers/mouse.o \

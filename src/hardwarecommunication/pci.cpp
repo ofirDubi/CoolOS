@@ -5,6 +5,9 @@
  */
 
 #include <hardwarecommunication/pci.h>
+#include <drivers/amd_am79c973.h>
+
+
 using namespace coolOS::common;
 using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
@@ -102,12 +105,11 @@ void PeripheralComponentInterconnectController::SelectDrivers(coolOS::drivers::D
                     if(bar.address && (bar.type == InputOutput)){
                         dev.portBase = (uint32_t)bar.address;
                     }
-                    
-                    Driver * driver = GetDriver(dev, interruptManager);
-                    
-                    if(driver != 0){
-                        driverManager->AddDriver(driver);
-                    }
+                   
+                }
+                Driver * driver = GetDriver(dev, interruptManager);
+                if(driver != 0){
+                    driverManager->AddDriver(driver);
                 }
                 
                 printf("PCI BUS ");
@@ -179,17 +181,18 @@ BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressReg
 }
 
 
-Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, InterruptManager * interrupManager){
+Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, InterruptManager * interruptManager){
     Driver *driver = 0;
     switch(dev.vendor_id){
         case  0x1022: //AMD
             switch(dev.device_id){
                 case 0x2000: //am79c973 
-                /*    driver = (amd_am79c973*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c973));
-                    if(driver != 0){
-                        new (driver) amd_am79c973(...);
-                    }*/
                     printf("AMD am79c973");
+                    driver = (Driver*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c973));
+                    if(driver != 0){
+                        new (driver) amd_am79c973(&dev, interruptManager);
+                    }
+                    return driver;
                     break;
             }
             break;
