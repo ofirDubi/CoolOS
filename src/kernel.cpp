@@ -14,6 +14,8 @@
 #include <memorymanagment.h>
 #include <multitasking.h>
 
+
+#include <drivers/amd_am79c973.h>
 //#define GRAPHICS_MODE
 
 using namespace coolOS;
@@ -226,9 +228,13 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     Window win2(&desktop, 40, 15, 30, 30, RGB_GREEN);
     desktop.AddChild(&win2);
 #endif
+    
+    
+    
+    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
+    eth0->Send((uint8_t*)"Hello Network", 13 );
+    
    interrupts.Activate();
-    
-    
     
     while(1){
 #ifdef GRAPHICS_MODE

@@ -6,14 +6,15 @@
 
 #include <drivers/amd_am79c973.h>
 
-#define CHECK_DEVICE_CODE(code ,errorCode, errorMessage) if((code & errorCode) == errorCode) printf(errorMessage);
+#define CHECK_DEVICE_CODE(code ,targetCode, targetMessage) if((code & targetCode) == targetCode) printf(targetMessage);
 
 using namespace coolOS;
 using namespace coolOS::hardwarecommunication;
 using namespace coolOS::drivers;
 using namespace coolOS::common;
 
-
+void printf(char *);
+void printfHex(uint8_t);
 
 amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor *dev, InterruptManager * interruptManager)
 : Driver(),                              
@@ -119,7 +120,7 @@ int amd_am79c973::Reset(){
    return 10; //should w8 for 10 miliseconds
 }
 
-void printf(char *);
+
 
 uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
     
@@ -135,7 +136,7 @@ uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
     CHECK_DEVICE_CODE(temp, 0x2000, "AMD am79c973 COLLISION ERROR\n");
     CHECK_DEVICE_CODE(temp, 0x1000,"AMD am79c973 MISSED FRAME ERROR\n" );
     CHECK_DEVICE_CODE(temp, 0x0800,"AMD am79c973 MISSED MEMORY ERROR\n");
-    CHECK_DEVICE_CODE(temp, 0x0400,"AMD am79c973 DATA RECEIVED\n" );
+    if((temp & 0x0400) == 0x0400) Receive(); //if received data, go to Receive method
     CHECK_DEVICE_CODE(temp, 0x0200,"AMD am79c973 DATA SENT\n" );
     
     //acknowledge the received data
@@ -146,4 +147,66 @@ uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
     CHECK_DEVICE_CODE(temp, 0x0100, "AMD am79c973 INIT DONE\n");
     
     return esp;
+}
+
+
+void amd_am79c973::Send(uint8_t* buffer, int size){
+    //were the data was sent from
+    uint8_t sendDescriptor = currentSendBuffer;
+    //move to the next available buffer - so we can send data from multiple tasks at the same time
+    
+    currentSendBuffer = (currentSendBuffer +1) % 8;
+    
+    if(size > 1518){
+        //not good, discards everything after 1518
+        printf("AMD am79c973 WARNING: data is too big, sending the first 1518 bits.\n");
+        size = 1518;
+    }
+    
+       for(uint8_t *src = buffer + size -1,
+                *dst = (uint8_t*)(sendBufferDescr[sendDescriptor].address + size -1);
+                 src >= buffer; src--, dst--){
+                    
+           *dst = *src;
+       }
+    sendBufferDescr[sendDescriptor].avail = 0; //not available
+    sendBufferDescr[sendDescriptor].flags2 = 0; //clear error messages
+    sendBufferDescr[sendDescriptor].flags = 0x8300F000  //encode the size we need to send -check *9:54 video number 18*
+                                          | ((uint16_t)((-size) & 0xFFF));
+    
+    //send the data to the device
+    registerAddressPort.Write(0);
+    registerDataPort.Write(0x48);
+}
+
+void amd_am79c973::Receive(){
+    
+    printf("AMD am79c973 MISSED MEMORY ERROR\n");
+    
+    //loop the receive buffers until you fid an empty buffer, a buffer is empty if its first bit is 0
+    for(; (recvBufferDescr[currentRecvBuffer].flags & 0x80000000) == 0; currentRecvBuffer = (currentRecvBuffer +1) %8){
+        
+        if(!(recvBufferDescr[currentRecvBuffer].flags & 0x40000000) //check the error bit
+           && (recvBufferDescr[currentRecvBuffer].flags & 0x03000000) ==0x03000000 ){ //check start of packet and en of packet bits
+                                                                                        //check page 184 of documentation
+            uint32_t size = recvBufferDescr[currentRecvBuffer].flags & 0xFFF;
+            
+            if(size > 64){ //size of ethernet 2 frame
+                size -= 4; //last 4 bytes are checksum, not needed
+            }
+            
+            uint8_t* buffer = (uint8_t*)(recvBufferDescr[currentRecvBuffer].address);
+            
+            //print what you received
+            for(int i=0; i < size; i++){
+                printfHex(buffer[i]);
+                printf(" ");
+            }
+            
+        }
+        //free the receive buffer
+        recvBufferDescr[currentRecvBuffer].flags2 =0;
+        recvBufferDescr[currentRecvBuffer].flags =0x8000F7FF;
+    }
+    
 }
