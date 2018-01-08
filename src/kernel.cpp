@@ -9,6 +9,7 @@
 #include <drivers/keyboard.h>
 #include <drivers/mouse.h>
 #include <drivers/vga.h>
+#include <drivers/ata.h>
 #include <gui/desktop.h>
 #include <gui/window.h>
 #include <memorymanagment.h>
@@ -216,7 +217,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printf("Initializing Hardware, Stage 2\n");
 
         drvManager.ActivateAll();
-
+        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     printf("Initializing Hardware, Stage 3\n");
 
    
@@ -229,13 +230,34 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     desktop.AddChild(&win2);
 #endif
     
+    //interrupt 14
+    AdvancedTechnologyAttachment ata0m(0x1F0, true);
+    printf("ATA Primary Master:\n");
+    ata0m.Identify();
+    AdvancedTechnologyAttachment ata0s(0x1F0, false);
+    printf("\nATA Primary Slave:\n");
+    ata0s.Identify();
     
+    char * ataBuffer = "im such a cool operating system";
+    ata0m.Write28(0, (uint8_t *)ataBuffer, 31);
+    ata0m.Flush();
+
+    ata0m.Read28(0, (uint8_t *)ataBuffer, 31);
     
+      //interrupt 15
+    AdvancedTechnologyAttachment ata1m(0x170, true);
+    AdvancedTechnologyAttachment ata1s(0x170, false);
+    
+    //check interrupts for third and fourth
+    //if we have more - third 0x1E8
+    //fourth: 0x168
+    
+    /*
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
     eth0->Send((uint8_t*)"Hello Network", 13 );
-    
+    */
    interrupts.Activate();
-    
+
     while(1){
 #ifdef GRAPHICS_MODE
         desktop.Draw(&vga);

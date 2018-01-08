@@ -11,6 +11,8 @@
     <itemPath>include/common/RGB.h</itemPath>
     <itemPath>src/drivers/amd_am79c973.cpp</itemPath>
     <itemPath>include/drivers/amd_am79c973.h</itemPath>
+    <itemPath>src/drivers/ata.cpp</itemPath>
+    <itemPath>include/drivers/ata.h</itemPath>
     <itemPath>driver.cpp</itemPath>
     <itemPath>driver.h</itemPath>
     <itemPath>gdt.cpp</itemPath>
@@ -72,6 +74,8 @@
       </item>
       <item path="include/drivers/amd_am79c973.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/drivers/ata.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="include/drivers/vga.h" ex="false" tool="3" flavor2="0">
@@ -100,6 +104,8 @@
       <item path="port.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/drivers/amd_am79c973.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/drivers/ata.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/drivers/vga.cpp" ex="false" tool="1" flavor2="0">
       </item>

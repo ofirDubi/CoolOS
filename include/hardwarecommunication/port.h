@@ -11,8 +11,8 @@
  * Created on December 14, 2017, 8:16 AM
  */
 
-#ifndef __COMMON__HARDWARECOMMUNICATION__PORT_H
-#define __COMMON__HARDWARECOMMUNICATION__PORT_H
+#ifndef __COOLOS__HARDWARECOMMUNICATION__PORT_H
+#define __COOLOS__HARDWARECOMMUNICATION__PORT_H
 
 #include <common/types.h>
 
@@ -76,8 +76,8 @@ namespace coolOS{
 
         template<class DataType> void Port<DataType>::SlowWrite(DataType data){
 
-            ChoosePortSize(WriteToPort("outb %0, %1\njmp lf\nlf:"), WriteToPort("outw %0, %1\njmp lf\nlf:"),
-                    WriteToPort("outl %0, %1\njmp lf\nlf:"));
+            ChoosePortSize(WriteToPort("outb %0, %1\nnop\nnop\nnop"), WriteToPort("outw %0, %1\nnop\nnop\nnop"),
+                    WriteToPort("outl %0, %1\nnop\nnop\nnop"));
 
         }
 
