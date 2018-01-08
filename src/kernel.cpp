@@ -1,5 +1,3 @@
-#define HIGH_BYTE 0xFF00
-#define SCREEN_WIDTH 80
 
 #include <common/types.h>
 #include <gdt.h>
@@ -14,9 +12,10 @@
 #include <gui/window.h>
 #include <memorymanagment.h>
 #include <multitasking.h>
-
-
+#include <common/coolio.h>
 #include <drivers/amd_am79c973.h>
+
+//uncomment for gui
 //#define GRAPHICS_MODE
 
 using namespace coolOS;
@@ -25,50 +24,8 @@ using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 using namespace coolOS::gui;
 
-void printf(char *str){
-    
-    
-    uint16_t * VideoMemory = (uint16_t *)0xb8000;
-    
-    static uint8_t x = 0, y=0;
 
-    for(int i=0; str[i] != '\0'; i++){
-        switch(str[i]){
-                
-            case '\n':
-                y++;
-                x =0;
-                break;
-            default:
-                VideoMemory[SCREEN_WIDTH*y +x] = (VideoMemory[SCREEN_WIDTH*y +x] & HIGH_BYTE) | str[i];
-                x++;
-        }
-        if(x >= SCREEN_WIDTH){
-            y++;
-            x =0;
-        }
-        if(y >=25){
-            
-            for(y =0; y<25; y++){
-                for(x =0; x<SCREEN_WIDTH; x++){
-                    VideoMemory[SCREEN_WIDTH*y +x] = (VideoMemory[SCREEN_WIDTH*y +x] & HIGH_BYTE) |' ';
-
-                }
-            }
-            x=0;
-            y=0;
-        }
-    }
-}
-
-void printfHex(uint8_t key){
-    char * msg = "00";
-    char * hex = "0123456789ABCDEF";
-    msg[0] = hex[(key >> 4) & 0x0F];
-    msg[1] = hex[key & 0x0f];
-    printf(msg);
-}
-
+//default drivers 
 
 class PrintfKeyBoardEventHandler : public KeyBoardEventHandler{
 public:
@@ -124,7 +81,7 @@ public:
 
 };
 
-
+//multitasking test
 void taskA(){
     while(true){
       //  printf("A");
@@ -152,14 +109,15 @@ extern "C" void callConstructors()
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //maybe irelevent
     
     printf("Hello world\n");
-    
+    //create Global Descriptor Table
     GlobalDescriptorTable gdt;
     
     //the size of the ram
     uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
     size_t heap = 10*1024*1024; //10 MB
-    MemoryManager memoryManager(heap, (*memupper)*1024 - heap - 10*1024);
     
+    MemoryManager memoryManager(heap, (*memupper)*1024 - heap - 10*1024);
+    //dynamic memory allocation
     printf("heap: 0x");
     printfHex((heap >> 24) & 0xff);
     printfHex((heap >> 16) & 0xff);
@@ -174,6 +132,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printfHex(((size_t)allocated) & 0xff);
     printf("\n");
     
+    //multi-tasking
     TaskManager taskManager;
     /*
     Task task1(&gdt, taskA);
@@ -182,6 +141,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     taskManager.AddTask(&task1);
     taskManager.AddTask(&task2);
     */
+    
+    //set up PIC
     InterruptManager interrupts(0x20,&gdt, &taskManager);
     
     printf("Initializing Hardware, Stage 1\n");
@@ -209,17 +170,20 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
         
         drvManager.AddDriver(&mouse);
         
+        //set up PCI
         PeripheralComponentInterconnectController PCIController;
         PCIController.SelectDrivers(&drvManager, &interrupts);
+        
         
         VideoGraphicsArray vga;
         
     printf("Initializing Hardware, Stage 2\n");
-
+        //activate drivers
         drvManager.ActivateAll();
-        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+        
+        
+    printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     printf("Initializing Hardware, Stage 3\n");
-
    
     //set vga
 #ifdef GRAPHICS_MODE
@@ -229,8 +193,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     Window win2(&desktop, 40, 15, 30, 30, RGB_GREEN);
     desktop.AddChild(&win2);
 #endif
-    
-    //interrupt 14
+    // set up hard drive
+    //sends interrupt 14
     AdvancedTechnologyAttachment ata0m(0x1F0, true);
     printf("ATA Primary Master:\n");
     ata0m.Identify();
@@ -238,11 +202,11 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printf("\nATA Primary Slave:\n");
     ata0s.Identify();
     
-    char * ataBuffer = "im such a cool operating system";
-    ata0m.Write28(0, (uint8_t *)ataBuffer, 31);
+    char * ataBuffer = "im such a cool operating system\n";
+    ata0m.Write28(0, (uint8_t *)ataBuffer, 32);
     ata0m.Flush();
 
-    ata0m.Read28(0, (uint8_t *)ataBuffer, 31);
+    ata0m.Read28(0, (uint8_t *)ataBuffer, 32);
     
       //interrupt 15
     AdvancedTechnologyAttachment ata1m(0x170, true);
@@ -256,6 +220,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
     eth0->Send((uint8_t*)"Hello Network", 13 );
     */
+    
+   //start accepting interrupts
    interrupts.Activate();
 
     while(1){

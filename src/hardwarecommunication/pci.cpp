@@ -6,6 +6,7 @@
 
 #include <hardwarecommunication/pci.h>
 #include <drivers/amd_am79c973.h>
+#include <common/coolio.h>
 
 
 using namespace coolOS::common;
@@ -80,8 +81,6 @@ bool PeripheralComponentInterconnectController::DeviceHasFunctions (uint16_t bus
     return Read(bus, device, 0, 0x0E) & (1<<7);
 }
 
-void printfHex(uint8_t);
-void printf(char * str);
 
 
 void PeripheralComponentInterconnectController::SelectDrivers(coolOS::drivers::DriverManager* driverManager, coolOS::hardwarecommunication::InterruptManager * interruptManager){

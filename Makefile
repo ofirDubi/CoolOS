@@ -2,7 +2,8 @@ GPPPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti 
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 
-objects = obj/loader.o \
+objects = obj/common/coolio.o \
+	  obj/loader.o \
 	  obj/gdt.o \
 	  obj/memorymanagment.o \
 	  obj/drivers/driver.o \

@@ -5,6 +5,8 @@
  */
 
 #include <drivers/keyboard.h>
+#include <common/coolio.h>
+
 
 using namespace coolOS::common;
 using namespace coolOS::drivers;
@@ -35,8 +37,6 @@ KeyboardDriver::~KeyboardDriver(){
    
 }
 
-void printf(char *);
-void printfHex(uint8_t key);
 
 void KeyboardDriver::Activate(){
     

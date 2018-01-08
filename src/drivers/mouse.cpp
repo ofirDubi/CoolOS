@@ -5,13 +5,13 @@
  */
 
 #include <drivers/mouse.h>
+#include <common/coolio.h>
 
 
 using namespace coolOS::common;
 using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 
-void printf(char *);
 
 #define INIT_X 40
 #define INIT_Y 12

@@ -6,10 +6,12 @@
 
 //can be done better 
 #include<memorymanagment.h>
+#include <common/coolio.h>
+
 
 using namespace coolOS;
 using namespace coolOS::common;
-void * printf(char*);
+
 
 MemoryManager* MemoryManager::activeMemoryManager = 0;
 

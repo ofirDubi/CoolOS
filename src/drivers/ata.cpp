@@ -5,14 +5,12 @@
  */
 
 #include<drivers/ata.h>
+#include <common/coolio.h>
 
 using namespace coolOS;
 using namespace coolOS::common;
 using namespace coolOS::drivers;
 
-
-void printf(char *);
-void printfHex(uint8_t);
 
 
 AdvancedTechnologyAttachment::AdvancedTechnologyAttachment(uint16_t portBase, bool master)

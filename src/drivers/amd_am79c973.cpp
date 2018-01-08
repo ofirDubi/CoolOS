@@ -5,6 +5,8 @@
  */
 
 #include <drivers/amd_am79c973.h>
+#include <common/coolio.h>
+
 
 #define CHECK_DEVICE_CODE(code ,targetCode, targetMessage) if((code & targetCode) == targetCode) printf(targetMessage);
 
@@ -13,8 +15,6 @@ using namespace coolOS::hardwarecommunication;
 using namespace coolOS::drivers;
 using namespace coolOS::common;
 
-void printf(char *);
-void printfHex(uint8_t);
 
 amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor *dev, InterruptManager * interruptManager)
 : Driver(),                              

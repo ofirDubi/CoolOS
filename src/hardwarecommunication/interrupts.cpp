@@ -4,14 +4,13 @@
  * and open the template in the editor.
  */
 #include <hardwarecommunication/interrupts.h>
+#include <common/coolio.h>
 
 using namespace coolOS;
 using namespace coolOS::common;
 using namespace coolOS::hardwarecommunication;
 
 
-void printf(char * str);
-void printfHex(uint8_t key);
 
 InterruptHandler::InterruptHandler(InterruptManager* interruptManager, uint8_t interruptNumber){
     this->interruptNumber = interruptNumber;
