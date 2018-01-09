@@ -33,6 +33,8 @@
     <itemPath>include/hardwarecommunication/pci.h</itemPath>
     <itemPath>port.cpp</itemPath>
     <itemPath>port.h</itemPath>
+    <itemPath>src/syscalls.cpp</itemPath>
+    <itemPath>include/syscalls.h</itemPath>
     <itemPath>test.cpp</itemPath>
     <itemPath>types.h</itemPath>
     <itemPath>src/drivers/vga.cpp</itemPath>
@@ -93,6 +95,8 @@
       </item>
       <item path="include/multitasking.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/syscalls.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="interrupts.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="interrupts.h" ex="false" tool="3" flavor2="0">
@@ -120,6 +124,8 @@
       <item path="src/memorymanagment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/syscalls.cpp" ex="false" tool="3" flavor2="0">
       </item>
       <item path="test.cpp" ex="false" tool="1" flavor2="0">
       </item>

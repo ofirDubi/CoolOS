@@ -95,6 +95,8 @@ namespace coolOS{
         static void HandleInterruptRequest0x0E();
         static void HandleInterruptRequest0x0F();
         static void HandleInterruptRequest0x31();
+        
+        static void HandleInterruptRequest0x80(); //software interrupt - for syscallls
 
         static void HandleException0x00();
         static void HandleException0x01();

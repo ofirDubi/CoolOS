@@ -10,6 +10,7 @@ objects = obj/common/coolio.o \
 	  obj/hardwarecommunication/port.o \
 	  obj/hardwarecommunication/interrupts.o \
 	  obj/hardwarecommunication/interruptstubs.o \
+	  obj/syscalls.o \
 	  obj/multitasking.o \
 	  obj/drivers/amd_am79c973.o \
 	  obj/hardwarecommunication/pci.o \
