@@ -16,6 +16,7 @@
 #define __COMMON__HARDWARECOMMUNICATION__GDT_H
 
 #include <common/types.h>
+//#include <tss.h>
 
 namespace coolOS{
 
@@ -37,11 +38,26 @@ namespace coolOS{
 
 
                 }__attribute__((packed));
-
+            
+                
+                
             SegmentDescriptor nullSegmentSelector;
             SegmentDescriptor unusedSegmentSelector; //check why there is a need for this
             SegmentDescriptor codeSegmentSelector;
             SegmentDescriptor dataSegmentSelector;
+            
+            SegmentDescriptor userspaceCodeSegmentSelector;
+            SegmentDescriptor userspaceDataSegmentSelector;
+            
+            //SegmentDescriptor tss;
+            struct gdt_ptr_struct
+            {
+               common::uint16_t limit;               // The upper 16 bits of all selector limits.
+               common::uint32_t base;                // The address of the first gdt_entry_t struct.
+            }__attribute__((packed));
+            
+            typedef struct gdt_ptr_struct gdt_ptr;      
+           
 
         public:
             GlobalDescriptorTable();

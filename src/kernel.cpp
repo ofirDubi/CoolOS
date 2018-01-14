@@ -139,13 +139,13 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     
     //multi-tasking
     TaskManager taskManager;
-    
+    /*
     Task task1(&gdt, taskA);
     Task task2(&gdt, taskB);
     
     taskManager.AddTask(&task1);
     taskManager.AddTask(&task2);
-    
+    */
     
     //set up PIC
     InterruptManager interrupts(0x20,&gdt, &taskManager);
@@ -188,7 +188,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
         drvManager.ActivateAll();
         
         
-   // printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
+    //printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     printf("Initializing Hardware, Stage 3\n");
    
     //set vga
@@ -201,7 +201,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 #endif
     // set up hard drive
     //sends interrupt 14
-/*    AdvancedTechnologyAttachment ata0m(0x1F0, true);
+    /*AdvancedTechnologyAttachment ata0m(0x1F0, true);
     printf("ATA Primary Master:\n");
     ata0m.Identify();
     AdvancedTechnologyAttachment ata0s(0x1F0, false);
@@ -213,7 +213,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     ata0m.Flush();
 
     ata0m.Read28(0, (uint8_t *)ataBuffer, 32);
-    
+    */
+    printf("accessing hard drive");
       //interrupt 15
     AdvancedTechnologyAttachment ata1m(0x170, true);
     AdvancedTechnologyAttachment ata1s(0x170, false);
@@ -221,15 +222,15 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //check interrupts for third and fourth
     //if we have more - third 0x1E8
     //fourth: 0x168
-  */  
+    
     /*
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
     eth0->Send((uint8_t*)"Hello Network", 13 );
     */
-    
+    printf("activating interrupts");
    //start accepting interrupts
    interrupts.Activate();
-
+   printf("interrupts activated");
     while(1){
 #ifdef GRAPHICS_MODE
         desktop.Draw(&vga);

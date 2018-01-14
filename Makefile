@@ -5,6 +5,7 @@ LDPARAMS = -melf_i386
 objects = obj/common/coolio.o \
 	  obj/loader.o \
 	  obj/gdt.o \
+	  obj/gdtflush.o \
 	  obj/memorymanagment.o \
 	  obj/drivers/driver.o \
 	  obj/hardwarecommunication/port.o \
