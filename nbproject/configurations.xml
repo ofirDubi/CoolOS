@@ -37,6 +37,7 @@
     <itemPath>src/syscalls.cpp</itemPath>
     <itemPath>include/syscalls.h</itemPath>
     <itemPath>test.cpp</itemPath>
+    <itemPath>src/tss.cpp</itemPath>
     <itemPath>include/tss.h</itemPath>
     <itemPath>types.h</itemPath>
     <itemPath>src/userspace.cpp</itemPath>
@@ -133,6 +134,8 @@
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/syscalls.cpp" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="src/tss.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/userspace.cpp" ex="false" tool="3" flavor2="0">
       </item>

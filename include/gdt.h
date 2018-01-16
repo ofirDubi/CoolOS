@@ -16,7 +16,7 @@
 #define __COMMON__HARDWARECOMMUNICATION__GDT_H
 
 #include <common/types.h>
-//#include <tss.h>
+#include <tss.h>
 
 namespace coolOS{
 
@@ -49,7 +49,9 @@ namespace coolOS{
             SegmentDescriptor userspaceCodeSegmentSelector;
             SegmentDescriptor userspaceDataSegmentSelector;
             
-            //SegmentDescriptor tss;
+            tss_entry_t tss_entry;
+            SegmentDescriptor tssSelector;
+            
             struct gdt_ptr_struct
             {
                common::uint16_t limit;               // The upper 16 bits of all selector limits.

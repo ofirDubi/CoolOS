@@ -19,21 +19,43 @@ extern void gdt_flush(uint32_t);
 #endif
 
 GlobalDescriptorTable::GlobalDescriptorTable(): //create table
-nullSegmentSelector(0,0,0),
-unusedSegmentSelector(0,0,0),
-codeSegmentSelector(0,64*1024*1024, 0x9A), //0x9a is access flag - read wiki.osdev.org/global_descripto_table
-dataSegmentSelector(0,64*1024*1024,0x92), //0x92 is access flag
-userspaceCodeSegmentSelector(0,64*1024*1024, 0xFA),
-userspaceDataSegmentSelector(0,64*1024*1024, 0xF2)
+nullSegmentSelector(0,0,0,0),
+unusedSegmentSelector(0,0,0,0),
+codeSegmentSelector(0,64*1024*1024, 0x9A,0), //0x9a is access flag - read wiki.osdev.org/global_descripto_table
+dataSegmentSelector(0,64*1024*1024,0x92,0), //0x92 is access flag
+userspaceCodeSegmentSelector(0,64*1024*1024, 0xFA,0),
+userspaceDataSegmentSelector(0,64*1024*1024, 0xF2,0)
 {
     
     //working version:
+    
+    //tss
+    uint32_t base = (uint32_t)&tss_entry;
+    uint32 limit = base + sizeof(tss_entry);
+    tssSelector(base, limit, 0xE9, 1);
+    memset(&tss_entry, 0, sizeof(tts_entry));
+    
+    tss_entry.ss0 = 0x10;
+    tss_entry.esp0 = 0x00
+    
+    // Here we set the cs, ss, ds, es, fs and gs entries in the TSS. These specify what
+   // segments should be loaded when the processor switches to kernel mode. Therefore
+   // they are just our normal kernel code/data segments - 0x08 and 0x10 respectively,
+   // but with the last two bits set, making 0x0b and 0x13. The setting of these bits
+   // sets the RPL (requested privilege level) to 3, meaning that this TSS can be used
+   // to switch to kernel mode from ring 3.
+   tss_entry.cs   = 0x0b;
+   tss_entry.ss = tss_entry.ds = tss_entry.es = tss_entry.fs = tss_entry.gs = 0x13;
+            
     uint32_t gdt[2]; //6 bytes
     
     gdt[0] = sizeof(GlobalDescriptorTable) <<16; 
     gdt[1] = (uint32_t)this;
     
     asm volatile("lgdt (%0)": :"p" (((uint8_t *)gdt)+2) ); //lgdt - asm commmand that loads the descriptor table
+    
+    asm volatile("ltr (%0)": :"Nd" (0x2B) ); //ltr - lods task state register                                                  
+
 #ifdef testGdt
     //test version
     //tell the processor to use table
@@ -52,7 +74,6 @@ userspaceDataSegmentSelector(0,64*1024*1024, 0xF2)
     gdt_flush((uint32_t)&ptr);
     asm volatile("lgdt (%0)": :"p" (((uint32_t)&ptr)+4)); //lgdt - asm commmand that loads the descriptor table
 
-    //asm volatile("ltr (%0)": :"p" (((uint8_t *)gdt)+5) ); //ltr - lods task state register                                                  
 #endif
 }
         
@@ -69,12 +90,16 @@ uint16_t GlobalDescriptorTable::getCodeSegmentSelector(){ //returns the code seg
     return (uint8_t*)&codeSegmentSelector - (uint8_t*)this;
 }
 
-GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t flags ){
+GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint32_t limit, uint8_t flags, uint8_t granualarity_flag ){
     
     
     uint8_t* target = (uint8_t *)this;
     
-    if(limit <= _16BIT){ //limit is smaller then 16 bit
+    if(granualarity_flag==1){
+        target[6] = 0;
+        target[6] |= 0xF0;
+    }
+    else if(limit <= _16BIT){ //limit is smaller then 16 bit
         target[6] = 0x40; //16 bit mode
     } 
     else{
@@ -100,6 +125,7 @@ GlobalDescriptorTable::SegmentDescriptor::SegmentDescriptor(uint32_t base, uint3
 
     //encode flags
     target[5] = flags;
+
 }
 
 //decode base

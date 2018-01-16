@@ -49,7 +49,9 @@ namespace coolOS{
     } __packed;
 
     typedef struct tss_entry_struct tss_entry_t;
-
+    
+    //to be called when switching tasks
+    void setKernelStack(common::uint32_t, tss_entry_t);
 }
 
 
