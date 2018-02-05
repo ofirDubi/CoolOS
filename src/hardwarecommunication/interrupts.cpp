@@ -36,11 +36,6 @@ uint32_t InterruptHandler::HandleInterrupt(uint32_t esp){
 
 
 
-
-
-
-
-
 InterruptManager::GateDescriptor InterruptManager::interruptDescriptorTable[256];
 
 InterruptManager * InterruptManager::ActiveInterruptManager = 0;
@@ -168,8 +163,9 @@ void InterruptManager::Activate(){
         ActiveInterruptManager->Deactivate();
     }
     ActiveInterruptManager = this;
-    
+    printf("calling asm sti\n");
     asm("sti"); //start interrupts 
+    printf("clled sti\n");
 }
 
 void InterruptManager::Deactivate(){
@@ -194,6 +190,7 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp){
         printf("received interrupt 0x");
         printfHex(interrupt);
     }*/
+    printf("received interrupt: ");
     if(handlers[interrupt] != 0){
         
         esp = handlers[interrupt]->HandleInterrupt(esp);

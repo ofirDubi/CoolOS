@@ -82,7 +82,7 @@ public:
     }
 
 };
-//usermode
+/*usermode
 void switch_to_user_mode()
 {
    // Set up a stack structure for switching to user mode.
@@ -106,7 +106,7 @@ void switch_to_user_mode()
      iret; \ 
    1: \ 
      ");
-}
+}*/
 
 
 //multitasking test
@@ -142,7 +142,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printf("Hello world\n");
     //create Global Descriptor Table
     GlobalDescriptorTable gdt;
-    
+    printf("GDT set");
     //the size of the ram
     uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
     size_t heap = 10*1024*1024; //10 MB
@@ -240,7 +240,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 
     ata0m.Read28(0, (uint8_t *)ataBuffer, 32);
     */
-    printf("accessing hard drive");
+    printf("accessing hard drive\n");
       //interrupt 15
     AdvancedTechnologyAttachment ata1m(0x170, true);
     AdvancedTechnologyAttachment ata1s(0x170, false);

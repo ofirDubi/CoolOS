@@ -17,32 +17,27 @@
 
 #include <common/types.h>
 #include <tss.h>
-
+#include<common/coolio.h>
 namespace coolOS{
 
             class GlobalDescriptorTable
             {
-            public:
-                class SegmentDescriptor{
-                private:
+            private:
+                typedef struct {
+                
                     coolOS::common::uint16_t limit_lo;
                     coolOS::common::uint16_t base_lo;
                     coolOS::common::uint8_t base_hi;
                     coolOS::common::uint8_t type;
                     coolOS::common::uint8_t flags_limit_hi;
                     coolOS::common::uint8_t base_vhi;
-                public:
-                    SegmentDescriptor(coolOS::common::uint32_t base, coolOS::common::uint32_t limit, coolOS::common::uint8_t type);
-                    coolOS::common::uint32_t Base();
-                    coolOS::common::uint32_t Limit();
-
-
-                }__attribute__((packed));
-            
+                }__attribute__((packed)) SegmentDescriptor;
+             
                 
-                
+                               //  SegmentDescriptor(coolOS::common::uint32_t base, coolOS::common::uint32_t limit, coolOS::common::uint8_t type , coolOS::common::uint8_t granualarity_flag);
+
             SegmentDescriptor nullSegmentSelector;
-            SegmentDescriptor unusedSegmentSelector; //check why there is a need for this
+           SegmentDescriptor unusedSegmentSelector; //check why there is a need for this
             SegmentDescriptor codeSegmentSelector;
             SegmentDescriptor dataSegmentSelector;
             
@@ -64,7 +59,7 @@ namespace coolOS{
         public:
             GlobalDescriptorTable();
             ~GlobalDescriptorTable();
-
+            void setSegmentDescriptor(SegmentDescriptor * sd, common::uint32_t base, common::uint32_t limit, common::uint8_t access, common::uint8_t gran);
             coolOS::common::uint16_t getCodeSegmentSelector();
             coolOS::common::uint16_t getDataSegmentSelector();
 

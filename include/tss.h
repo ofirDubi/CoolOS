@@ -46,7 +46,7 @@ namespace coolOS{
        common::uint32_t ldt;      
        common::uint16_t trap;
        common::uint16_t iomap_base;
-    } __packed;
+    }__attribute__((packed));
 
     typedef struct tss_entry_struct tss_entry_t;
     

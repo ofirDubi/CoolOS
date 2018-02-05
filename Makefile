@@ -2,11 +2,11 @@ GPPPARAMS = -m32 -Iinclude -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti 
 ASPARAMS = --32
 LDPARAMS = -melf_i386
 
-objects = obj/common/coolio.o \
+objects = obj/gdtflush.o \
+	  obj/common/coolio.o \
 	  obj/loader.o \
 	  obj/gdt.o \
 	  obj/tss.o \
-	  obj/gdtflush.o \
 	  obj/memorymanagment.o \
 	  obj/drivers/driver.o \
 	  obj/hardwarecommunication/port.o \
@@ -28,9 +28,14 @@ objects = obj/common/coolio.o \
 obj/%.o: src/%.cpp
 	mkdir -p $(@D)
 	g++ $(GPPPARAMS) -o $@ -c $<
+	
 obj/%.o: src/%.s
 	mkdir -p $(@D)
 	as $(ASPARAMS) -o $@ $<
+	
+obj/%.o: src/%.asm
+	mkdir -p $(@D)
+	nasm -f elf $< -o $@ 
 
 mykernel.bin: linker.ld $(objects)
 	ld $(LDPARAMS) -T $< -o $@ $(objects)
