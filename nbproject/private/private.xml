@@ -7,9 +7,18 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/drivers/amd_am79c973.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/drivers/amd_am79c973.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/common/coolio.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/memorymanagment.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/filesystem/msdospart.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/Makefile</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/hardwarecommunication/pci.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/src/gdtflush.s</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/net/etherframe.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/src/kernel.cpp</file>
-            <file>file:/home/ofir123dubi/Documents/CoolOS/src/gdt.cpp</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/include/net/etherframe.h</file>
+            <file>file:/home/ofir123dubi/Documents/CoolOS/src/common/coolio.cpp</file>
             <file>file:/home/ofir123dubi/Documents/CoolOS/include/gdt.h</file>
         </group>
     </open-files>

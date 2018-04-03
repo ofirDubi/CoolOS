@@ -16,6 +16,36 @@ using namespace coolOS::drivers;
 using namespace coolOS::common;
 
 
+
+
+            //should point to ethernet driver
+
+
+RawDataHandler::RawDataHandler(amd_am79c973* backend){
+    this->backend = backend;
+    backend->SetHandler(this);
+}
+
+RawDataHandler::~RawDataHandler(){
+    backend->SetHandler(0);
+}
+
+bool RawDataHandler::OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size){
+    
+}
+
+
+void RawDataHandler::Send(common::uint8_t * buffer, common::uint32_t size){
+    backend->Send(buffer, size);
+}
+
+
+
+
+
+
+
+
 amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor *dev, InterruptManager * interruptManager)
 : Driver(),                              
     InterruptHandler(interruptManager, dev->interrupt +interruptManager->getHardwareInterruptOffset()),
@@ -28,6 +58,7 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor *dev,
     busControlRegisterDataPort(dev->portBase + 0x16)
     
 {
+    this->data_handler = 0;
     currentSendBuffer = 0;
     currentRecvBuffer = 0;
     
@@ -181,7 +212,7 @@ void amd_am79c973::Send(uint8_t* buffer, int size){
 
 void amd_am79c973::Receive(){
     
-    printf("AMD am79c973 MISSED MEMORY ERROR\n");
+    printf("AMD am79c973 DATA RECEIVED\n");
     
     //loop the receive buffers until you fid an empty buffer, a buffer is empty if its first bit is 0
     for(; (recvBufferDescr[currentRecvBuffer].flags & 0x80000000) == 0; currentRecvBuffer = (currentRecvBuffer +1) %8){
@@ -197,11 +228,19 @@ void amd_am79c973::Receive(){
             
             uint8_t* buffer = (uint8_t*)(recvBufferDescr[currentRecvBuffer].address);
             
+            if(data_handler != 0){
+                if(data_handler->OnRawDataReceived(buffer, size)){
+                    //echo
+                    Send(buffer, size);
+                }
+                
+            }
+            /*
             //print what you received
             for(int i=0; i < size; i++){
                 printfHex(buffer[i]);
                 printf(" ");
-            }
+            }*/
             
         }
         //free the receive buffer
@@ -209,4 +248,14 @@ void amd_am79c973::Receive(){
         recvBufferDescr[currentRecvBuffer].flags =0x8000F7FF;
     }
     
+}
+
+
+void amd_am79c973::SetHandler(RawDataHandler* data_handler){
+    this->data_handler = data_handler;
+    
+}
+
+uint64_t amd_am79c973::GetMACAddress(){
+    return initBlock.physicalAddress;
 }

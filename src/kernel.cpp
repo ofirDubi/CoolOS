@@ -16,7 +16,7 @@
 #include <syscalls.h>
 
 #include <drivers/amd_am79c973.h>
-
+#include <net/etherframe.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
 
@@ -25,7 +25,7 @@ using namespace coolOS::common;
 using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 using namespace coolOS::gui;
-
+using namespace coolOS::net;
 
 //default drivers 
 
@@ -201,7 +201,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 #endif
     // set up hard drive
     //sends interrupt 14
-    /*AdvancedTechnologyAttachment ata0m(0x1F0, true);
+    /*
+    AdvancedTechnologyAttachment ata0m(0x1F0, true);
     printf("ATA Primary Master:\n");
     ata0m.Identify();
     AdvancedTechnologyAttachment ata0s(0x1F0, false);
@@ -213,7 +214,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     ata0m.Flush();
 
     ata0m.Read28(0, (uint8_t *)ataBuffer, 32);
-    */
+    
     printf("accessing hard drive");
       //interrupt 15
     AdvancedTechnologyAttachment ata1m(0x170, true);
@@ -222,11 +223,12 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //check interrupts for third and fourth
     //if we have more - third 0x1E8
     //fourth: 0x168
-    
-    /*
-    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
-    eth0->Send((uint8_t*)"Hello Network", 13 );
     */
+    
+    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);
+    EtherFrameProvider etherframe(eth0);
+    etherframe.Send(0xFFFFFFFFFFFF, 0x0608, (uint8_t *)"FOO", 3);
+    
     printf("activating interrupts");
    //start accepting interrupts
    interrupts.Activate();

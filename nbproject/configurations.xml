@@ -17,6 +17,8 @@
     <itemPath>include/common/coolio.h</itemPath>
     <itemPath>driver.cpp</itemPath>
     <itemPath>driver.h</itemPath>
+    <itemPath>src/net/etherframe.cpp</itemPath>
+    <itemPath>include/net/etherframe.h</itemPath>
     <itemPath>gdt.cpp</itemPath>
     <itemPath>gdt.h</itemPath>
     <itemPath>src/gdtflush.s</itemPath>
@@ -102,6 +104,8 @@
       </item>
       <item path="include/multitasking.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/net/etherframe.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/syscalls.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/tss.h" ex="false" tool="3" flavor2="0">
@@ -137,6 +141,8 @@
       <item path="src/memorymanagment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/net/etherframe.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/syscalls.cpp" ex="false" tool="3" flavor2="0">
       </item>

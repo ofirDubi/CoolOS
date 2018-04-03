@@ -24,8 +24,21 @@ namespace coolOS{
     
     namespace drivers{
         
-
+        class amd_am79c973;
         
+        class RawDataHandler{
+        protected:
+            //should point to ethernet driver
+            amd_am79c973 *  backend;  
+        public:
+            RawDataHandler(amd_am79c973* backend);
+            ~RawDataHandler();
+            virtual bool OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size);
+            void Send(common::uint8_t * buffer, common::uint32_t size);
+            
+        };
+
+        //can do: derive from ethernet driver 
         class amd_am79c973 : public Driver, public hardwarecommunication::InterruptHandler{
             
             struct InitializationBlock{
@@ -71,9 +84,11 @@ namespace coolOS{
             common::uint8_t recvBufferDescrMemory[2*1024+15];
             common::uint8_t recvBuffers[2*1024+15][8];
             common::uint8_t currentRecvBuffer;
-
+            
+            RawDataHandler* data_handler;
         public:
-            amd_am79c973(hardwarecommunication::PeripheralComponentInterconnectDeviceDescriptor *dev, hardwarecommunication::InterruptManager * interruptManager); 
+            amd_am79c973(hardwarecommunication::PeripheralComponentInterconnectDeviceDescriptor *dev, 
+                    hardwarecommunication::InterruptManager * interruptManager); 
             ~amd_am79c973();
             
             void Activate();
@@ -83,7 +98,9 @@ namespace coolOS{
             void Send(common::uint8_t* bufer, int count);
             void Receive();
             
+            void SetHandler(RawDataHandler*  data_handler);
             
+            common::uint64_t GetMACAddress();
         };
     }
 }
