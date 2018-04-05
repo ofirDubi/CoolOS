@@ -23,6 +23,7 @@ objects = obj/common/coolio.o \
 	  obj/gui/window.o \
 	  obj/gui/desktop.o \
 	  obj/net/etherframe.o\
+	  obj/net/arp.o\
 	  obj/kernel.o
 
 obj/%.o: src/%.cpp

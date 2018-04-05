@@ -11,6 +11,8 @@
     <itemPath>include/common/RGB.h</itemPath>
     <itemPath>src/drivers/amd_am79c973.cpp</itemPath>
     <itemPath>include/drivers/amd_am79c973.h</itemPath>
+    <itemPath>src/net/arp.cpp</itemPath>
+    <itemPath>include/net/arp.h</itemPath>
     <itemPath>src/drivers/ata.cpp</itemPath>
     <itemPath>include/drivers/ata.h</itemPath>
     <itemPath>src/common/coolio.cpp</itemPath>
@@ -104,6 +106,8 @@
       </item>
       <item path="include/multitasking.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/net/arp.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/net/etherframe.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/syscalls.h" ex="false" tool="3" flavor2="0">
@@ -141,6 +145,8 @@
       <item path="src/memorymanagment.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/multitasking.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/net/arp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/net/etherframe.cpp" ex="false" tool="1" flavor2="0">
       </item>

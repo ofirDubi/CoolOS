@@ -78,7 +78,7 @@ namespace coolOS{
             //8 buffers, each of size 2KB plus 15 bytes that are used by the amd_am79c973 chip
             common::uint8_t sendBuffers[2*1024+15][8];
             //which buffers are now activated
-            common::uint8_t currentSendBuffer;
+            common::uint32_t currentSendBuffer;
             
             BufferDescriptor* recvBufferDescr;
             common::uint8_t recvBufferDescrMemory[2*1024+15];
@@ -99,8 +99,12 @@ namespace coolOS{
             void Receive();
             
             void SetHandler(RawDataHandler*  data_handler);
-            
             common::uint64_t GetMACAddress();
+            //TODO: change to DHCP protocol
+            void SetIPAddress (common::uint32_t);
+            common::uint32_t GetIPAddress();
+
+            
         };
     }
 }

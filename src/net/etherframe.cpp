@@ -5,6 +5,7 @@
  */
 
 #include<net/etherframe.h>
+#include<common/coolio.h>
 using namespace coolOS;
 using namespace coolOS::common;
 using namespace coolOS::net;
@@ -68,7 +69,7 @@ bool EtherFrameProvider::OnRawDataReceived(common::uint8_t* buffer , common::uin
     return send_back;
     
 }
-void EtherFrameProvider::Send(common::uint64_t dstMAC_BE, common::uint16_t etherType_BE , 
+void EtherFrameProvider::Send(common::uint64_t dstMAC_BE , common::uint16_t etherType_BE , 
         common::uint8_t * buffer, common::uint32_t size){
     
     //maybe need to add size of checksum
@@ -77,7 +78,8 @@ void EtherFrameProvider::Send(common::uint64_t dstMAC_BE, common::uint16_t ether
     EtherFrameHeader* frame = (EtherFrameHeader*)buffer2;
     
     frame->dstMAC_BE = dstMAC_BE;
-    frame->srcMAC_BE = backend->GetMACAddress();
+
+    frame->srcMAC_BE = GetMACAddress();
     frame->etherType_BE = etherType_BE;
     
     
@@ -90,6 +92,11 @@ void EtherFrameProvider::Send(common::uint64_t dstMAC_BE, common::uint16_t ether
     backend->Send(buffer2, size + sizeof(EtherFrameHeader));
 }
 
+uint32_t EtherFrameProvider::GetIPAddress(){
+    return backend->GetIPAddress();
+}
 
-
+uint64_t EtherFrameProvider::GetMACAddress(){
+    return backend->GetMACAddress();
+}
         

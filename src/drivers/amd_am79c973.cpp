@@ -182,8 +182,10 @@ uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
 
 
 void amd_am79c973::Send(uint8_t* buffer, int size){
+    
+    printf("AMD am79c973 SENDING DATA");
     //were the data was sent from
-    uint8_t sendDescriptor = currentSendBuffer;
+    uint32_t sendDescriptor = currentSendBuffer;
     //move to the next available buffer - so we can send data from multiple tasks at the same time
     
     currentSendBuffer = (currentSendBuffer +1) % 8;
@@ -200,6 +202,15 @@ void amd_am79c973::Send(uint8_t* buffer, int size){
                     
            *dst = *src;
        }
+    
+
+    printf("\n");
+    printf("Sending: ");
+    for(int i = 0; i < size; i++)
+    {
+        printfHex(buffer[i]);
+        printf(" ");
+    }
     sendBufferDescr[sendDescriptor].avail = 0; //not available
     sendBufferDescr[sendDescriptor].flags2 = 0; //clear error messages
     sendBufferDescr[sendDescriptor].flags = 0x8300F000  //encode the size we need to send -check *9:54 video number 18*
@@ -228,6 +239,8 @@ void amd_am79c973::Receive(){
             
             uint8_t* buffer = (uint8_t*)(recvBufferDescr[currentRecvBuffer].address);
             
+         
+            
             if(data_handler != 0){
                 if(data_handler->OnRawDataReceived(buffer, size)){
                     //echo
@@ -235,12 +248,15 @@ void amd_am79c973::Receive(){
                 }
                 
             }
-            /*
+            
+            size = 64;
             //print what you received
             for(int i=0; i < size; i++){
                 printfHex(buffer[i]);
                 printf(" ");
-            }*/
+            }
+            
+            
             
         }
         //free the receive buffer
@@ -258,4 +274,12 @@ void amd_am79c973::SetHandler(RawDataHandler* data_handler){
 
 uint64_t amd_am79c973::GetMACAddress(){
     return initBlock.physicalAddress;
+}
+
+void amd_am79c973::SetIPAddress(uint32_t ip){
+    initBlock.logicalAddress = ip;
+}
+
+uint32_t amd_am79c973::GetIPAddress(){
+    return initBlock.logicalAddress;
 }
