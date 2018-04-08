@@ -20,7 +20,9 @@ EtherFrameHandler::EtherFrameHandler(EtherFrameProvider* backend ,common::uint16
 }
 
 EtherFrameHandler::~EtherFrameHandler(){
-    backend->handlers[etherType_BE] = 0;
+    if(backend->handlers[etherType_BE] == this){
+        backend->handlers[etherType_BE] = 0;
+    }
 }
 
 bool EtherFrameHandler::OnEtherFrameReceived(common::uint8_t * etherframePayload, common::uint32_t size){
@@ -50,6 +52,10 @@ EtherFrameProvider::~EtherFrameProvider(){
 
 bool EtherFrameProvider::OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size){
     
+    if(size < sizeof(EtherFrameHeader)){
+        return false;
+    }
+    
     EtherFrameHeader* frame = (EtherFrameHeader*)buffer;
     bool send_back = false;
     
@@ -58,7 +64,7 @@ bool EtherFrameProvider::OnRawDataReceived(common::uint8_t* buffer , common::uin
         
         if(handlers[frame->etherType_BE] != 0){
             send_back = handlers[frame->etherType_BE]->OnEtherFrameReceived( buffer+ sizeof(EtherFrameHeader), 
-                    size+ sizeof(EtherFrameHeader));
+                    size - sizeof(EtherFrameHeader));
         }
     }
     
@@ -90,6 +96,9 @@ void EtherFrameProvider::Send(common::uint64_t dstMAC_BE , common::uint16_t ethe
     }
     
     backend->Send(buffer2, size + sizeof(EtherFrameHeader));
+    
+    MemoryManager::activeMemoryManager->free(buffer);
+
 }
 
 uint32_t EtherFrameProvider::GetIPAddress(){

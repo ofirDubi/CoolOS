@@ -18,6 +18,7 @@
 #include <drivers/amd_am79c973.h>
 #include <net/etherframe.h>
 #include <net/arp.h>
+#include <net/ipv4.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
 
@@ -230,6 +231,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //setup ip
     uint8_t ip1 = 10, ip2 =0, ip3 = 2, ip4 = 15;    
     uint8_t gip1 = 10, gip2 =0, gip3 = 2, gip4 = 2;
+    uint8_t subnet1 = 255, subnet2 =255, subnet3 = 255, subnet4 = 0;
 
     uint32_t ip_be = ((uint32_t)ip4 <<24)
             | ((uint32_t)ip3 <<16)  
@@ -241,6 +243,10 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
             | ((uint32_t)gip2 <<8)  
             | (uint32_t)gip1 ;
     
+    uint32_t subnet_be = ((uint32_t)subnet4 <<24)
+            | ((uint32_t)subnet3 <<16)  
+            | ((uint32_t)subnet2 <<8)  
+            | (uint32_t)subnet1 ;
     
     amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);  
     
@@ -252,6 +258,10 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     
     AddressResolutionProtocol arp(&etherframe);
     
+    
+    
+    
+    InternetProtocolProvider ipv4(&etherframe, &arp, gip_be, subnet_be);
 
     //etherframe.Send(0xFFFFFFFFFFFF, 0x0608, (uint8_t *)"FOO", 3);
     
@@ -262,9 +272,11 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
    interrupts.Activate();
    printf("interrupts activated");
    
-   printf("\n\n\n\n\n\n\n\n\n");
-   
-   printf("resolving\n");
+  printf("\n\n\n\n\n\n\n\n\n");
+  
+  ipv4.Send(gip_be, 0x0008, (uint8_t*) "foobar", 6);
+  /* 
+   printf("ARP: resolving address\n");
    uint64_t ans = arp.Resolve(gip_be);
    
    uint8_t * buffer = (uint8_t *)&ans;
@@ -273,7 +285,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
        printf(" ");
    }
    printf("\nfinished resolving\n");
-  
+  */
    while(1){
 #ifdef GRAPHICS_MODE
         desktop.Draw(&vga);

@@ -119,6 +119,7 @@ uint64_t  AddressResolutionProtocol::Resolve(common::uint32_t IP_BE){
           RequestMACAddress(IP_BE);
     }
     while(result == 0xFFFFFFFFFFFF){ //possible infinite loop, if the machine is not connected
+        //printf("a");
         result = GetMACFromCache(IP_BE);
     }    
     

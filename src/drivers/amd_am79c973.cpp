@@ -156,7 +156,7 @@ int amd_am79c973::Reset(){
 
 uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
     
-    printf("INTERRUPT FROM AMD am79c973\n");
+   // printf("INTERRUPT FROM AMD am79c973\n");
     //like vanilla interrupt controller: need to read data if it exists
     
     registerAddressPort.Write(0);
@@ -184,7 +184,7 @@ uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
 
 void amd_am79c973::Send(uint8_t* buffer, int size){
     
-    printf("AMD am79c973 SENDING DATA");
+   // printf("AMD am79c973 SENDING DATA");
     //were the data was sent from
     uint32_t sendDescriptor = currentSendBuffer;
     //move to the next available buffer - so we can send data from multiple tasks at the same time
@@ -224,7 +224,7 @@ void amd_am79c973::Send(uint8_t* buffer, int size){
 
 void amd_am79c973::Receive(){
     
-    printf("AMD am79c973 DATA RECEIVED\n");
+    printf("\nAMD am79c973 DATA RECEIVED\n");
     
     //loop the receive buffers until you fid an empty buffer, a buffer is empty if its first bit is 0
     for(; (recvBufferDescr[currentRecvBuffer].flags & 0x80000000) == 0; currentRecvBuffer = (currentRecvBuffer +1) %8){

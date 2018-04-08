@@ -28,6 +28,8 @@
     <itemPath>interrupts.cpp</itemPath>
     <itemPath>interrupts.h</itemPath>
     <itemPath>interruptstubs.s</itemPath>
+    <itemPath>src/net/ipv4.cpp</itemPath>
+    <itemPath>include/net/ipv4.h</itemPath>
     <itemPath>keyboard.cpp</itemPath>
     <itemPath>keyboard.h</itemPath>
     <itemPath>src/memorymanagment.cpp</itemPath>
@@ -110,6 +112,8 @@
       </item>
       <item path="include/net/etherframe.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/net/ipv4.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/syscalls.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/tss.h" ex="false" tool="3" flavor2="0">
@@ -149,6 +153,8 @@
       <item path="src/net/arp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/net/etherframe.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/net/ipv4.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/syscalls.cpp" ex="false" tool="3" flavor2="0">
       </item>
