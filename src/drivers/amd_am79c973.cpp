@@ -30,12 +30,12 @@ RawDataHandler::~RawDataHandler(){
     backend->SetHandler(0);
 }
 
-bool RawDataHandler::OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size){
+bool RawDataHandler::OnRawDataReceived(uint8_t* buffer , uint32_t size){
     
 }
 
 
-void RawDataHandler::Send(common::uint8_t * buffer, common::uint32_t size){
+void RawDataHandler::Send(uint8_t * buffer, uint32_t size){
     backend->Send(buffer, size);
 }
 
@@ -113,9 +113,10 @@ amd_am79c973::amd_am79c973(PeripheralComponentInterconnectDeviceDescriptor *dev,
         
         recvBufferDescr[i].address = (((uint32_t)&recvBuffers[i]) + 15) & ~(uint32_t)0xF;
         recvBufferDescr[i].flags = 0xF7FF //check
-                                 | 0x800000000; //tells that it is a receive buffer and not a send buffer
+                                 | 0x80000000; //tells that it is a receive buffer and not a send buffer
         recvBufferDescr[i].flags2 = 0; 
-        recvBufferDescr[i].avail = 0;
+        recvBufferDescr[i].avail = 0; 
+        //sendBufferDescr[i].avail = 0;
     }
     //move initialization block to device
     registerAddressPort.Write(1);
