@@ -274,7 +274,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
    
   printf("\n\n\n\n\n\n\n\n\n");
   
-  ipv4.Send(gip_be, 0x0008, (uint8_t*) "foobar", 6);
+  ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
   /* 
    printf("ARP: resolving address\n");
    uint64_t ans = arp.Resolve(gip_be);

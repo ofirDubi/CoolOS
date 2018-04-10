@@ -92,6 +92,7 @@ bool InternetProtocolProvider::OnEtherFrameReceived(uint8_t* etherframePayload, 
         
         //reset TTL
         ipmessage->timeToLive = 0x40;
+        ipmessage->checksum = 0;
         
         //we need to update the checksum
         ipmessage->checksum = Checksum((uint16_t*)ipmessage, 4*ipmessage->headerLength);
