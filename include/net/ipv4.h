@@ -16,7 +16,6 @@
 
 #include<common/types.h>
 #include<net/arp.h>
-
 #include <net/etherframe.h>
 
 namespace coolOS{
@@ -33,7 +32,7 @@ namespace coolOS{
             
             common::uint8_t timeToLive;
             common::uint8_t protocol;
-            common::uint8_t checksum;
+            common::uint16_t checksum;
             
             
             common::uint32_t srcIP;
@@ -63,6 +62,8 @@ namespace coolOS{
             void Send(common::uint32_t dstIP_BE,  common::uint8_t * internetprotocolPayload , common::uint32_t size);
         };
         
+        
+        
         class InternetProtocolProvider :  public EtherFrameHandler{
             friend class InternetProtocolHandler;
         protected:
@@ -75,7 +76,7 @@ namespace coolOS{
                     common::uint32_t gatewayIP, common::uint32_t subnetMask);
             ~InternetProtocolProvider();
             
-            virtual bool OnEtherFrameReceived(common::uint8_t* internetprotocolPayload, common::uint32_t size);
+            bool OnEtherFrameReceived(common::uint8_t* internetprotocolPayload, common::uint32_t size);
             void Send(common::uint32_t dstIP_BE, common::uint8_t protocol ,common::uint8_t* data, common::uint32_t size);
             
             static common::uint16_t Checksum(common::uint16_t* data, common::uint32_t lengthInBytes); //generate a hecksum

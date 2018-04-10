@@ -52,7 +52,7 @@ namespace coolOS{
             AddressResolutionProtocol(EtherFrameProvider* backend);
             ~AddressResolutionProtocol();
             
-            bool OnEtherFrameReceived(common::uint8_t* etherframePayload, common::uint32_t size);
+            bool virtual OnEtherFrameReceived(common::uint8_t* etherframePayload, common::uint32_t size);
             
             //request another computer's MAC address
             void RequestMACAddress(common::uint32_t IP_BE);

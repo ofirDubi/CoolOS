@@ -168,7 +168,7 @@ uint32_t amd_am79c973::HandleInterrupt(uint32_t esp){
     CHECK_DEVICE_CODE(temp, 0x2000, "AMD am79c973 COLLISION ERROR\n");
     CHECK_DEVICE_CODE(temp, 0x1000,"AMD am79c973 MISSED FRAME ERROR\n" );
     CHECK_DEVICE_CODE(temp, 0x0800,"AMD am79c973 MISSED MEMORY ERROR\n");
-    if((temp & 0x0400) == 0x0400) Receive(); //if received data, go to Receive method
+    if((temp & 0x0400) == 0x0400) Receive(); //DATA RECEIVED
     CHECK_DEVICE_CODE(temp, 0x0200,"AMD am79c973 DATA SENT\n" );
     
     //acknowledge the received data
@@ -249,7 +249,6 @@ void amd_am79c973::Receive(){
                 }
                 
             }
-            
             size = 64;
             //print what you received
             for(int i=0; i < size; i++){

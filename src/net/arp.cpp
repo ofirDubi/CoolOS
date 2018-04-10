@@ -37,7 +37,7 @@ AddressResolutionProtocol::~AddressResolutionProtocol(){
 
 //when we receive an ARP request
 bool AddressResolutionProtocol::OnEtherFrameReceived(common::uint8_t* etherframePayload, common::uint32_t size){
- 
+        
     if(size < sizeof(AddressResolutionProtocolMessage)){
         return false;
     }

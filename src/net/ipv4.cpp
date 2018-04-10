@@ -6,6 +6,7 @@
  * Created on April 8, 2018, 7:55 AM
  */
 #include<net/ipv4.h>
+#include<common/coolio.h>
 
 using namespace coolOS;
 using namespace coolOS::common;

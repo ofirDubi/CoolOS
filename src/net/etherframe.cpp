@@ -16,7 +16,7 @@ EtherFrameHandler::EtherFrameHandler(EtherFrameProvider* backend ,common::uint16
     //convert from LE to BE
     this->etherType_BE = ((etherType & 0x00FF) << 8) | ((etherType & 0xFF00) >> 8) ;
     this->backend = backend;
-    backend->handlers[etherType] = this;    
+    backend->handlers[this->etherType_BE] = this;    
 }
 
 EtherFrameHandler::~EtherFrameHandler(){
@@ -51,7 +51,6 @@ EtherFrameProvider::~EtherFrameProvider(){
 }
 
 bool EtherFrameProvider::OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size){
-    
     if(size < sizeof(EtherFrameHeader)){
         return false;
     }
