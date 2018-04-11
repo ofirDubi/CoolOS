@@ -32,7 +32,7 @@ namespace coolOS{
             
             common::uint64_t srcMAC : 48;
             common::uint32_t srcIP;
-            common::uint64_t dstMAC : 48;
+            common::uint64_t dstMAC :48 ;
             common::uint32_t dstIP;
 
             
@@ -40,7 +40,7 @@ namespace coolOS{
         
         struct CacheUnit{
             common::uint32_t IP;
-            common::uint64_t MAC;
+            common::uint64_t MAC :48;
         };
         
         class AddressResolutionProtocol : public EtherFrameHandler{
@@ -52,7 +52,7 @@ namespace coolOS{
             AddressResolutionProtocol(EtherFrameProvider* backend);
             ~AddressResolutionProtocol();
             
-            bool virtual OnEtherFrameReceived(common::uint8_t* etherframePayload, common::uint32_t size);
+            bool OnEtherFrameReceived(common::uint8_t* etherframePayload, common::uint32_t size);
             
             //request another computer's MAC address
             void RequestMACAddress(common::uint32_t IP_BE);
@@ -60,7 +60,7 @@ namespace coolOS{
             
             //request address and wait for result
             common::uint64_t Resolve(common::uint32_t IP_BE);
-            
+            void BroadcastMACAddress(common::uint32_t IP_BE);
         };
         
     }

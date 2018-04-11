@@ -29,5 +29,5 @@ _stop:
 
 
 .section .bss
-.space 2*1024 * 1024 #2 MB
+.space 4*1024 * 1024 #4 MB
 kernel_stack:

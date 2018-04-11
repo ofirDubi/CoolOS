@@ -80,6 +80,32 @@ bool AddressResolutionProtocol::OnEtherFrameReceived(common::uint8_t* etherframe
     return false;
 }
 
+
+
+void AddressResolutionProtocol::BroadcastMACAddress(uint32_t IP_BE){
+    
+    AddressResolutionProtocolMessage arp;
+    arp.hardwareType = 0x0100; //BE of 1
+    arp.protocol = 0x0008; // IPv4
+    arp.hardwareAddressSize = 6; //MAC
+    arp.protocolAddressSize = 4; //IPv4
+    arp.command = 0x0200; //"response"
+    
+    arp.srcMAC = backend->GetMACAddress();
+    arp.srcIP = backend->GetIPAddress();
+    //uint64_t temp = Resolve(IP_BE);
+    //arp.dstMAC = 0;
+    arp.dstMAC = Resolve(IP_BE);
+    printf("finished resolving\n");
+    //arp.dstMAC = temp;
+    arp.dstIP = IP_BE;
+    
+    
+    this->Send(arp.dstMAC, (uint8_t *)&arp, sizeof(AddressResolutionProtocolMessage));
+    
+    
+}
+
 //request someone else's MAC Address
 void AddressResolutionProtocol::RequestMACAddress(common::uint32_t IP_BE){
     
@@ -117,14 +143,14 @@ uint64_t  AddressResolutionProtocol::Resolve(common::uint32_t IP_BE){
     uint64_t result = GetMACFromCache(IP_BE);
     if(result == 0xFFFFFFFFFFFF){
           RequestMACAddress(IP_BE);
+    }else{
+        printf("found MAC in cache\n");
     }
     while(result == 0xFFFFFFFFFFFF){ //possible infinite loop, if the machine is not connected
         //printf("a");
         result = GetMACFromCache(IP_BE);
     }    
-    
+    printf("AddressResolutionProtocol::Resolve finished\n");
     
     return result;
 }
-
-

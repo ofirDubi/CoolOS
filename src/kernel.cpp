@@ -19,6 +19,7 @@
 #include <net/etherframe.h>
 #include <net/arp.h>
 #include <net/ipv4.h>
+#include <net/icmp.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
 
@@ -265,7 +266,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 
     //etherframe.Send(0xFFFFFFFFFFFF, 0x0608, (uint8_t *)"FOO", 3);
     
-    
+    InternetControlMessageProtocol icmp(&ipv4);
     
     printf("activating interrupts");
    //start accepting interrupts
@@ -274,7 +275,13 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
    
   printf("\n\n\n\n\n\n\n\n\n");
   
-  ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
+  
+  //ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
+   printf("Broadcasting\n");
+   arp.BroadcastMACAddress(gip_be);
+   //printf("sending icmp\n");
+   icmp.RequestEchoReply(gip_be);
+  
   /* 
    printf("ARP: resolving address\n");
    uint64_t ans = arp.Resolve(gip_be);

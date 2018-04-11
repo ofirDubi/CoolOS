@@ -76,7 +76,8 @@ bool EtherFrameProvider::OnRawDataReceived(common::uint8_t* buffer , common::uin
 }
 void EtherFrameProvider::Send(common::uint64_t dstMAC_BE , common::uint16_t etherType_BE , 
         common::uint8_t * buffer, common::uint32_t size){
-    
+            printf(" EtherFrameProvider::Send start\n");
+
     //maybe need to add size of checksum
     uint8_t* buffer2 = MemoryManager::activeMemoryManager->malloc(sizeof(EtherFrameHeader) + size);
 
@@ -97,6 +98,8 @@ void EtherFrameProvider::Send(common::uint64_t dstMAC_BE , common::uint16_t ethe
     backend->Send(buffer2, size + sizeof(EtherFrameHeader));
     
     MemoryManager::activeMemoryManager->free(buffer);
+    
+        printf(" EtherFrameProvider::Send dealocated buffer, end\n");
 
 }
 

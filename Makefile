@@ -25,6 +25,7 @@ objects = obj/common/coolio.o \
 	  obj/net/etherframe.o\
 	  obj/net/arp.o\
 	  obj/net/ipv4.o\
+	  obj/net/icmp.o\
 	  obj/kernel.o
 
 obj/%.o: src/%.cpp

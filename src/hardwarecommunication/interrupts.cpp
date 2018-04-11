@@ -189,7 +189,7 @@ uint32_t InterruptManager::handleInterrupt(uint8_t interrupt, uint32_t esp){
 }
 
 uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp){
-    
+    static bool is_alive = true;
     /*if(interrupt != hardwareInterruptOffset){ //don't print for hardware clock interrupt
         printf("received interrupt 0x");
         printfHex(interrupt);
@@ -199,8 +199,15 @@ uint32_t InterruptManager::DoHandleInterrupt(uint8_t interrupt, uint32_t esp){
         esp = handlers[interrupt]->HandleInterrupt(esp);
     }
     else if(interrupt != hardwareInterruptOffset){ //don't print for hardware clock interrupt
+        if(interrupt == 0x0D){
+            if(is_alive){
+                printf("!!!\nSYSTEM IS DEAD X_X\n!!!");
+                is_alive = false;
+            }
+        }else{
         printf("UNHANDLED INTERRUPT 0x");
         printfHex(interrupt);
+        }
     }
     
     if(interrupt == hardwareInterruptOffset){ //timer interrupt
