@@ -67,7 +67,7 @@ void InterruptManager::SetInterruptDescriptorTableEntry(
     
 
     
-InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescriptorTable * gdt, TaskManager* taskManager)
+InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset, TaskManager* taskManager)
     :   picMasterCommand(0x20),
         picMasterData(0x21),
         picSlaveCommand(0xA0),
@@ -76,7 +76,7 @@ InterruptManager::InterruptManager(uint16_t hardwareInterruptOffset,GlobalDescri
     
     this->taskManager = taskManager;
     this->hardwareInterruptOffset = hardwareInterruptOffset;
-    uint32_t CodeSegment = gdt->getCodeSegmentSelector();
+    uint32_t CodeSegment = GDTGetCodeSegment();
     
     
     const uint8_t IDT_INTERRUPT_GATE = 0xE; //interrupt gate, not trap gate or task gate

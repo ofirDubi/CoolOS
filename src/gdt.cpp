@@ -22,9 +22,7 @@ GlobalDescriptorTable::GlobalDescriptorTable(): //create table
 nullSegmentSelector(0,0,0),
 unusedSegmentSelector(0,0,0),
 codeSegmentSelector(0,64*1024*1024, 0x9A), //0x9a is access flag - read wiki.osdev.org/global_descripto_table
-dataSegmentSelector(0,64*1024*1024,0x92), //0x92 is access flag
-userspaceCodeSegmentSelector(0,64*1024*1024, 0xFA),
-userspaceDataSegmentSelector(0,64*1024*1024, 0xF2)
+dataSegmentSelector(0,64*1024*1024,0x92) //0x92 is access flag
 {
     
     //working version:

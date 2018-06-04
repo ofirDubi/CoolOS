@@ -16,7 +16,7 @@
 
 #include <common/types.h>
 #include <hardwarecommunication/port.h>
-#include <gdt.h>
+#include <gdt_new.h>
 #include <multitasking.h>
 
 namespace coolOS{
@@ -132,7 +132,7 @@ namespace coolOS{
         
     public:
 
-        InterruptManager(coolOS::common::uint16_t hardwareInterruptOffset, GlobalDescriptorTable * gdt, coolOS::TaskManager* taskManager);
+        InterruptManager(coolOS::common::uint16_t hardwareInterruptOffset, coolOS::TaskManager* taskManager);
         ~InterruptManager();
         coolOS::common::uint16_t getHardwareInterruptOffset();
         void Activate();

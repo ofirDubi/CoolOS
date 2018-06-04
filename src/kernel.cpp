@@ -1,6 +1,7 @@
 
 #include <common/types.h>
-#include <gdt.h>
+//#include <gdt.h>
+#include <gdt_new.h>
 #include <hardwarecommunication/interrupts.h>
 #include <hardwarecommunication/pci.h>
 #include <drivers/driver.h>
@@ -22,6 +23,7 @@
 #include <net/icmp.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
+//#define BOOK_MODE 
 
 using namespace coolOS;
 using namespace coolOS::common;
@@ -104,21 +106,54 @@ void taskB(){
     
 
 }
-typedef void (*constructor)();
-extern "C" constructor start_ctors;
-extern "C" constructor end_ctors;
+typedef void (*constructor)(); 
+extern "C" constructor start_ctors; //receive start pointer from linker
+extern "C" constructor end_ctors; //receive end pointer from linker
 extern "C" void callConstructors()
 {
-    for(constructor* i = &start_ctors; i != &end_ctors; i++)
-        (*i)();
+    for(constructor* i = &start_ctors; i != &end_ctors; i++) //go through each address between the start pointer and the end pointer
+        (*i)(); //initialize constructors
 }
 
 
-extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //maybe irelevent
+
+#ifdef BOOK_MODE
+extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //receive the multiboot structure
+    
+    printf("Hello World :)\n"); // print :)
+        //create Global Descriptor Table
+    init_gdt();
+    
+    printf("done with gdt\n");
+    
+    TaskManager taskManager;
+        //set up PIC
+    InterruptManager interrupts(0x20, &taskManager);
+    printf("finished with interrupts");
+    
+    
+    
+    
+    while(true){ //keep the operating system alive
+        
+    }
+}
+
+
+
+#endif
+
+
+#ifndef BOOK_MODE
+
+
+extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //receive the 
     
     printf("Hello world\n");
     //create Global Descriptor Table
-    GlobalDescriptorTable gdt;
+   // GlobalDescriptorTable gdt;
+    init_gdt();
+
     
     //the size of the ram
     uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
@@ -143,15 +178,15 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //multi-tasking
     TaskManager taskManager;
     /*
-    Task task1(&gdt, taskA);
-    Task task2(&gdt, taskB);
+    Task task1(taskA);
+    Task task2( taskB);
     
     taskManager.AddTask(&task1);
     taskManager.AddTask(&task2);
     */
     
     //set up PIC
-    InterruptManager interrupts(0x20,&gdt, &taskManager);
+    InterruptManager interrupts(0x20, &taskManager);
     SyscallHandler syscalls(&interrupts, 0x80); //0x80 is software interrupt
     
     printf("Initializing Hardware, Stage 1\n");
@@ -276,11 +311,11 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
   printf("\n\n\n\n\n\n\n\n\n");
   
   
-  //ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
-   printf("Broadcasting\n");
+  ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
+  printf("Broadcasting\n\n\n\n\n\n\n\n\n");
    arp.BroadcastMACAddress(gip_be);
-   //printf("sending icmp\n");
-   icmp.RequestEchoReply(gip_be);
+  printf("sending icmp\n");
+  icmp.RequestEchoReply(gip_be);
   
   /* 
    printf("ARP: resolving address\n");
@@ -299,3 +334,4 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 #endif
     }
 }
+#endif

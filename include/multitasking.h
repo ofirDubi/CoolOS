@@ -14,7 +14,7 @@
 #ifndef __COOLOS__MULTITASKING_H
 #define __COOLOS__MULTITASKING_H
 
-#include <gdt.h>
+#include <gdt_new.h>
 #include <common/types.h>
 
 
@@ -59,7 +59,7 @@ namespace coolOS{
         CPUState* cpustate;
         
     public:
-        Task(GlobalDescriptorTable *gdt, void entrypoint());
+        Task( void entrypoint());
         ~Task();
         
     };

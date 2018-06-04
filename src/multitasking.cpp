@@ -9,7 +9,7 @@ using namespace coolOS;
 using namespace coolOS::common;
 
 
-Task::Task(GlobalDescriptorTable *gdt, void entrypoint()){
+Task::Task( void entrypoint()){
     cpustate = (CPUState*)(stack + 4096 -sizeof(CPUState));
     
     cpustate->eax =0;
@@ -32,7 +32,7 @@ Task::Task(GlobalDescriptorTable *gdt, void entrypoint()){
     
     // cpustate->esp =0; //uncomment when using security lvels
     cpustate->eip = (uint32_t)entrypoint;
-    cpustate->cs = gdt->getCodeSegmentSelector();
+    cpustate->cs = GDTGetCodeSegment();
     //cpustate->ss =0; //uncomment when implementing securety levels
     cpustate->eflags =0x202; //check what that means
 }

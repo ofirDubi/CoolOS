@@ -23,6 +23,8 @@
     <itemPath>include/net/etherframe.h</itemPath>
     <itemPath>gdt.cpp</itemPath>
     <itemPath>gdt.h</itemPath>
+    <itemPath>src/gdt_new.cpp</itemPath>
+    <itemPath>include/gdt_new.h</itemPath>
     <itemPath>src/gdtflush.s</itemPath>
     <itemPath>include/common/graphicscontext.h</itemPath>
     <itemPath>src/net/icmp.cpp</itemPath>
@@ -40,6 +42,7 @@
     <itemPath>include/filesystem/msdospart.h</itemPath>
     <itemPath>src/multitasking.cpp</itemPath>
     <itemPath>include/multitasking.h</itemPath>
+    <itemPath>src/new_gdt.h</itemPath>
     <itemPath>src/hardwarecommunication/pci.cpp</itemPath>
     <itemPath>include/hardwarecommunication/pci.h</itemPath>
     <itemPath>port.cpp</itemPath>
@@ -101,6 +104,8 @@
       </item>
       <item path="include/filesystem/msdospart.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/gdt_new.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/hardwarecommunication/pci.h"
             ex="false"
             tool="3"
@@ -146,6 +151,8 @@
       </item>
       <item path="src/filesystem/msdospart.cpp" ex="false" tool="1" flavor2="0">
       </item>
+      <item path="src/gdt_new.cpp" ex="false" tool="1" flavor2="0">
+      </item>
       <item path="src/gdtflush.s" ex="false" tool="4" flavor2="0">
       </item>
       <item path="src/hardwarecommunication/pci.cpp" ex="false" tool="1" flavor2="0">
@@ -161,6 +168,8 @@
       <item path="src/net/icmp.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/net/ipv4.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/new_gdt.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/syscalls.cpp" ex="false" tool="3" flavor2="0">
       </item>

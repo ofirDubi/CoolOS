@@ -12,8 +12,8 @@
  */
 
 
-#ifndef __COMMON__HARDWARECOMMUNICATION__GDT_H
-#define __COMMON__HARDWARECOMMUNICATION__GDT_H
+#ifndef __COMMON__GDT_H
+#define __COMMON__GDT_H
 
 #include <common/types.h>
 //#include <tss.h>
@@ -46,8 +46,8 @@ namespace coolOS{
             SegmentDescriptor codeSegmentSelector;
             SegmentDescriptor dataSegmentSelector;
             
-            SegmentDescriptor userspaceCodeSegmentSelector;
-            SegmentDescriptor userspaceDataSegmentSelector;
+       //     SegmentDescriptor userspaceCodeSegmentSelector;
+       //     SegmentDescriptor userspaceDataSegmentSelector;
             
             //SegmentDescriptor tss;
             struct gdt_ptr_struct
