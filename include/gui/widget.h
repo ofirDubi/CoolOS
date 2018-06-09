@@ -37,7 +37,7 @@ namespace coolOS{
             virtual void OnMouseDown(common::int32_t x, common::int32_t y, common::uint8_t button);
             virtual void OnMouseUp(common::int32_t x, common::int32_t y, common::uint8_t button);
             virtual void OnMouseMove(common::int32_t old_x, common::int32_t old_y,common::int32_t x, common::int32_t y );
-            
+
             
             
            

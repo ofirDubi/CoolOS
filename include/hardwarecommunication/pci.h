@@ -40,8 +40,8 @@ namespace coolOS{
             
         };
         //maybe change to struct as well
-        class PeripheralComponentInterconnectDeviceDescriptor {
-        public:
+        typedef struct PeripheralComponentInterconnectDeviceDescriptor {
+        
             coolOS::common::uint32_t portBase;
             coolOS::common::uint32_t interrupt;
             
@@ -60,8 +60,7 @@ namespace coolOS{
             
             coolOS::common::uint8_t revision ;
             
-            PeripheralComponentInterconnectDeviceDescriptor();
-            ~PeripheralComponentInterconnectDeviceDescriptor();
+            
             
         };
         

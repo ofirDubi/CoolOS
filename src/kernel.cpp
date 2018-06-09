@@ -24,7 +24,8 @@
 //uncomment for gui
 //#define GRAPHICS_MODE
 //#define BOOK_MODE 
-
+//#define NET
+//#define WRITE_TO_DRIVE
 using namespace coolOS;
 using namespace coolOS::common;
 using namespace coolOS::drivers;
@@ -34,26 +35,29 @@ using namespace coolOS::net;
 
 //default drivers 
 
+//default driver that prints key strokes
 class PrintfKeyBoardEventHandler : public KeyBoardEventHandler{
 public:
-    void OnKeyDown(char c){
+    void OnKeyDown(uint8_t c){
         char * foo = " ";
         foo[0] = c;
         printf(foo);
     }
 };
 
-
+//default mouse handler that shows the mouse cursor on the screen
 class MouseToConsole : public MouseEventHandler{
     int8_t x, y;
 public:
     MouseToConsole(){
-        
+        //the location of the screen in memory
         static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
-
+        //define the initial location of the mouse cursor as values 
         x=40;
         y=12;
-        //initiate the cursor to values x=40 and y=12
+        
+        //draw the cursor on the screen by flipping the background color with the forground color
+       //the cursor will be white
         VideoMemory[80*y +x] =  (VideoMemory[80*y+x] & 0xF000) >> 4 
                                     | (VideoMemory[80*y+x] & 0x0F00) << 4 
                                     | (VideoMemory[80*y+x] & 0x00FF);
@@ -61,29 +65,37 @@ public:
     
     void OnMouseMove(int x_offset, int y_offset){
         static uint16_t * VideoMemory = (uint16_t *)0xb8000; 
-
+        
+        //delete the cursor from it's previous location
         VideoMemory[80*y +x] =  ((VideoMemory[80*y+x] & 0xF000) >> 4) 
                                     | ((VideoMemory[80*y+x] & 0x0F00) << 4) 
                                     | ((VideoMemory[80*y+x] & 0x00FF));
-            x+= x_offset;
-            if( x<0 ){
-                x=0;
-            }
-            if(x >=80){
-                x = 79;
-            }
-
-            y += y_offset;
-            if( y<0 ){
-                y=0;
-            }
-            if(y >=25){
-                y = 24;
-            }
-            //show the cursor - flip the background and the forgroud colors
-            VideoMemory[80*y +x] =  ((VideoMemory[80*y+x] & 0xF000) >> 4) 
-                                    | ((VideoMemory[80*y+x] & 0x0F00) << 4) 
-                                    | ((VideoMemory[80*y+x] & 0x00FF));
+        // change x
+        x+= x_offset;
+        
+        //check x axis limits
+        if( x<0 ){
+            x=0;
+        }
+        if(x >=80){
+            x = 79;
+        }
+        
+        //change y
+        y += y_offset;
+        
+        //check y axis limits
+        if( y<0 ){
+            y=0;
+        }
+        if(y >=25){
+            y = 24;
+        }
+        
+        //draw the cursor in it's new location
+        VideoMemory[80*y +x] =  ((VideoMemory[80*y+x] & 0xF000) >> 4) 
+                                | ((VideoMemory[80*y+x] & 0x0F00) << 4) 
+                                | ((VideoMemory[80*y+x] & 0x00FF));
     }
 
 };
@@ -123,15 +135,70 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printf("Hello World :)\n"); // print :)
         //create Global Descriptor Table
     init_gdt();
-    
     printf("done with gdt\n");
     
     TaskManager taskManager;
         //set up PIC
     InterruptManager interrupts(0x20, &taskManager);
-    printf("finished with interrupts");
+    
+    //create a driver manager
+    DriverManager drvManager;
+    
+    //create an instance of the default event handler
+    PrintfKeyBoardEventHandler kbhandler;
+    
+    //create a KeyboardDriver that uses our default keyboard handler 
+    KeyboardDriver keyboard(&interrupts, &kbhandler);
+    
+    //the size of the memupper points to the start of our kernel code (including our stack)
+    uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
+    
+    //the heap starts at 10 MB
+    size_t heap = 10*1024*1024; //10 MB
+    
+    //start the heap at 10MB, a large enough margin
+     MemoryManager memoryManager(heap, (*memupper)*1024 - heap - 10*1024);
+     
+    //print heap location 
+    printf("heap: 0x");
+    printfHex((heap >> 24) & 0xff);
+    printfHex((heap >> 16) & 0xff);
+    printfHex((heap >> 8) & 0xff);
+    printfHex((heap) & 0xff);
+    //dynamic memory allocation
+    void * allocated_1 = memoryManager.malloc(1024);
+    void * allocated = memoryManager.malloc(1024);
+    //print allocated location
+    printf("\nallocated: 0x");
+    printfHex(((size_t)allocated >> 24) & 0xff);
+    printfHex(((size_t)allocated >> 16) & 0xff);
+    printfHex(((size_t)allocated >> 8) & 0xff);
+    printfHex(((size_t)allocated) & 0xff);
+    printf("\n");
+    
+    //free the allocated memory
+    memoryManager.free(allocated);
+ 
+    //add keyboard driver
+    drvManager.AddDriver(&keyboard);
+    
+    //create a mouse driver and handler
+    MouseToConsole mousehandler;
+    MouseDriver mouse(&interrupts, &mousehandler);
+
+    //insert the mouse driver into the driver manager
+    drvManager.AddDriver(&mouse);
+    
+    //activate drivers
+    drvManager.ActivateAll();
+
+ 
+    
+   
     
     
+    interrupts.Activate();
+    printf("activated interrupts");
     
     
     while(true){ //keep the operating system alive
@@ -239,7 +306,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 #endif
     // set up hard drive
     //sends interrupt 14
-    /*
+#ifdef WRITE_TO_DRIVE
     AdvancedTechnologyAttachment ata0m(0x1F0, true);
     printf("ATA Primary Master:\n");
     ata0m.Identify();
@@ -261,9 +328,17 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //check interrupts for third and fourth
     //if we have more - third 0x1E8
     //fourth: 0x168
-    */
- 
     
+#endif
+#ifndef NET
+   
+   //start accepting interrupts
+   interrupts.Activate();
+   printf("interrupts activated");
+#endif
+
+    
+#ifdef NET 
     //setup ip
     uint8_t ip1 = 10, ip2 =0, ip3 = 2, ip4 = 15;    
     uint8_t gip1 = 10, gip2 =0, gip3 = 2, gip4 = 2;
@@ -328,9 +403,14 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
    }
    printf("\nfinished resolving\n");
   */
-   while(1){
+#endif
 #ifdef GRAPHICS_MODE
-        desktop.Draw(&vga);
+    desktop.Draw(&vga); 
+#endif 
+
+    while(1){
+#ifdef GRAPHICS_MODE
+        //desktop.Draw(&vga);
 #endif
     }
 }

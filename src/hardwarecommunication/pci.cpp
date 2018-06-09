@@ -14,15 +14,6 @@ using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 
 
-PeripheralComponentInterconnectDeviceDescriptor::PeripheralComponentInterconnectDeviceDescriptor(){
-    
-}
-PeripheralComponentInterconnectDeviceDescriptor::~PeripheralComponentInterconnectDeviceDescriptor(){
-    
-}
-
-
-
 
 PeripheralComponentInterconnectController::PeripheralComponentInterconnectController() 
 : dataPort(0xCFC), 

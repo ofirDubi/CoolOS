@@ -17,23 +17,34 @@
 #include <common/types.h>
 
 namespace coolOS{
+    // a linked list of memory chunk headers
     struct MemoryChunk{
+        //pointers to the next and previous items on the linked list
         MemoryChunk* next;
         MemoryChunk* prev;
+        //is this chunk allocated
         bool allocated;
+        //the size of this chunk (not including the header size)
         common::size_t size;
     };
     
+    //a memory manager that holds a pointer to the first chunk in the heap and provides malloc and free utilities
     class MemoryManager{
     protected:
+        //the first node of the memory's linked list
         MemoryChunk* first;
     public:
+        
+        //The current memory manager
         static MemoryManager *activeMemoryManager;
         
         MemoryManager(common::size_t first, common::size_t size);
         ~MemoryManager();
         
+        //allocate a chunk of memory
         void* malloc(common::size_t size);
+        
+        //free a chunk of memory
         void free(void* ptr);
         
     };

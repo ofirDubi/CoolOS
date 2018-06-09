@@ -32,11 +32,12 @@ void Driver::Deactivate(){
 DriverManager::DriverManager() {
     numDrivers= 0;
 }
+//add a driver
 void DriverManager::AddDriver(Driver* drv){
     drivers[numDrivers] = drv;
     numDrivers++;
 }
-
+//invoke the Activate() method for each driver in the drivers array.
 void DriverManager::ActivateAll(){
     
     for(int i=0; i< numDrivers; i++){

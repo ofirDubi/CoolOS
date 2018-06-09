@@ -15,6 +15,7 @@
 #define __COMMON__GDT_NEW_H
 
 #include <common/types.h>
+#include <common/coolmemory.h>
 
 namespace coolOS{
     
@@ -25,7 +26,7 @@ namespace coolOS{
 	common::uint8_t base16_23;
 	common::uint8_t acces;
 	common::uint8_t lim16_19:4;
-	common::uint8_t other:4;
+	common::uint8_t flag:4;
 	common::uint8_t base24_31;
     }__attribute__ ((packed));
     
@@ -63,9 +64,8 @@ namespace coolOS{
     typedef struct tss_struct tss;
 
     common::uint16_t  GDTGetCodeSegment();
-    void init_gdt_desc(common::uint32_t, common::uint32_t, common::uint8_t, common::uint8_t,  gdt_entry *);
+    void init_gdt_entry(common::uint32_t, common::uint32_t, common::uint8_t, common::uint8_t,  gdt_entry *);
     void init_gdt(void);
-    void *memcpy(char *dst, char *src, int n);
 }
 
 

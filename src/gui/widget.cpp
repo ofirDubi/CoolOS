@@ -22,7 +22,7 @@ Widget::Widget(Widget * parent,
 Widget::~Widget(){
     
 }
-
+    
 void Widget::GetFocus(Widget* widget){
     if(parent != 0){
         parent->GetFocus(widget);

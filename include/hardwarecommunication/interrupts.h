@@ -26,8 +26,9 @@ namespace coolOS{
 
     class InterruptHandler{
     protected:
-
+       //this handler is used for interrupts with the value of interruptNumber
        coolOS::common::uint8_t interruptNumber;
+       //this handler's InterruptManager
        InterruptManager * interruptManager;
 
        InterruptHandler(InterruptManager * interruptManager, coolOS::common::uint8_t interruptNumber );
@@ -42,13 +43,13 @@ namespace coolOS{
     friend class InterruptHandler; 
     protected:
 
-        static InterruptManager * ActiveInterruptManager;
-        InterruptHandler * handlers[256]; //a pointer for each interrupt
+        static InterruptManager * ActiveInterruptManager; //a pointer to an active interrupt manager.
+        InterruptHandler * handlers[256]; //a pointer for each interrupt handler
         TaskManager *taskManager; //pointer to the task manager
         
      
         
-
+        //IDT entry
         struct GateDescriptor{
             coolOS::common::uint16_t handlerAddressLowBits;
             coolOS::common::uint16_t gdt_codeSegmentSelector;
@@ -59,17 +60,23 @@ namespace coolOS{
         }__attribute__((packed));
 
         static GateDescriptor interruptDescriptorTable[256]; //there are 256 interrupts
-
+        
+        //IDT wrapper
         struct interruptDescriptorTablePointer{
             coolOS::common::uint16_t size;
             coolOS::common::uint32_t base;
         }__attribute__((packed));
         
+        /*every chipset has a hardware offset, the hardware offset is the number of interrupts that are reserved for exeptions.
+        the offset will be tranfered to the PIC
+        without an offset, we will receive INT 0 as INT hardwareoffset*/
         coolOS::common::uint16_t hardwareInterruptOffset;
+        
+        //receive GateDescriptor data, create a GateDescriptor and insert it to interruptDescriptorTable
         static void SetInterruptDescriptorTableEntry(
             coolOS::common::uint8_t interrupt,
             coolOS::common::uint16_t gdt_codeSegmentSelectorOffset,
-            void (*handler)(), 
+            void (*handler)(),  //the location of the handler function
             coolOS::common::uint8_t DescriptorPrivilegLevel,
             coolOS::common::uint8_t DescriptorType
         ); 
@@ -119,8 +126,11 @@ namespace coolOS{
         static void HandleException0x12();
         static void HandleException0x13();
         
-        
+        //static function to be called from assembly wrapper
         static coolOS::common::uint32_t handleInterrupt(coolOS::common::uint8_t interrupt, coolOS::common::uint32_t esp);
+        
+        /*non static function - should be called from handleInterrupt 
+         * by accessing the static variable ActiveInterruptManager*/
         coolOS::common::uint32_t DoHandleInterrupt(coolOS::common::uint8_t interrupt, coolOS::common::uint32_t esp);
     
         

@@ -16,7 +16,7 @@
 namespace coolOS{
     namespace drivers{
         
- 
+        //a class that represents a generic Driver
         class Driver{
 
         public:
@@ -25,18 +25,22 @@ namespace coolOS{
 
             virtual void Activate();
             virtual void Deactivate();
+            //restart the connected device
             virtual int Reset();
 
         };
         class DriverManager{
-        public:
+        private:
+            //an array of drivers
             Driver* drivers[265];
+            // the number of current drivers in the array
             int numDrivers;
 
         public:
             DriverManager();
+            //a function that adds drivers
             void AddDriver(Driver* drv);
-
+            //a function that activate each driver in the drivers array
             void ActivateAll();
 
         };

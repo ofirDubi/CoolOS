@@ -4,6 +4,7 @@ LDPARAMS = -melf_i386
 
 objects = obj/loader.o \
 	  obj/common/coolio.o \
+	  obj/common/coolmemory.o \
 	  obj/gdt_new.o \
 	  obj/gdtflush.o \
 	  obj/memorymanagment.o \

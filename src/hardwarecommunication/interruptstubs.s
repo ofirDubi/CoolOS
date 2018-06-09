@@ -1,23 +1,23 @@
 
-.set IRQ_BASE, 0x20
+.set IRQ_BASE, 0x20 #hardware offset
 
 .section .text
 
-.extern _ZN6coolOS21hardwarecommunication16InterruptManager15handleInterruptEhj #the name of the object file interrupt.o
+.extern _ZN6coolOS21hardwarecommunication16InterruptManager15handleInterruptEhj #the symbol of the handleInterrupt function
 
 #.global _ZN6coolOS21hardwarecommunication16InterruptManager22IgnoreInterruptRequestEv 
 
 .macro HandleException num 
-.global _ZN6coolOS21hardwarecommunication16InterruptManager19HandleException\num\()Ev #check this line
-_ZN6coolOS21hardwarecommunication16InterruptManager19HandleException\num\()Ev:
-    movb $\num, (interruptnumber)
+.global _ZN6coolOS21hardwarecommunication16InterruptManager19HandleException\num\()Ev #override the original symbol
+_ZN6coolOS21hardwarecommunication16InterruptManager19HandleException\num\()Ev: #write a new symbol
+    movb $\num, (interruptnumber) #move the number into the iterruptnumber parameter
     jmp int_bottom
 .endm
 
 .macro HandleInterruptRequest num 
-.global _ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev #check this line
-_ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev:
-    movb $\num + IRQ_BASE, (interruptnumber) #what is IRQ_Base
+.global _ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev #override the original symbol
+_ZN6coolOS21hardwarecommunication16InterruptManager26HandleInterruptRequest\num\()Ev: #write a new symbol
+    movb $\num + IRQ_BASE, (interruptnumber) #adds the hardware offset
     pushl $0 #push error for CPUStatus struct
     jmp int_bottom
 .endm
@@ -88,7 +88,7 @@ int_bottom:
 
     # call C++ handler
     pushl %esp
-    push (interruptnumber)
+    push (interruptnumber) #push interruptnumber. makes it pass as a parameter to the C++ function
     call _ZN6coolOS21hardwarecommunication16InterruptManager15handleInterruptEhj
     # addl $5, %esp
     mov %eax, %esp #switch the stack

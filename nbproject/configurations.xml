@@ -17,6 +17,8 @@
     <itemPath>include/drivers/ata.h</itemPath>
     <itemPath>src/common/coolio.cpp</itemPath>
     <itemPath>include/common/coolio.h</itemPath>
+    <itemPath>src/common/coolmemory.cpp</itemPath>
+    <itemPath>include/common/coolmemory.h</itemPath>
     <itemPath>driver.cpp</itemPath>
     <itemPath>driver.h</itemPath>
     <itemPath>src/net/etherframe.cpp</itemPath>
@@ -92,6 +94,8 @@
       </item>
       <item path="include/common/coolio.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="include/common/coolmemory.h" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="include/common/graphicscontext.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="include/drivers/amd_am79c973.h" ex="false" tool="3" flavor2="0">
@@ -142,6 +146,8 @@
       <item path="port.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="src/common/coolio.cpp" ex="false" tool="1" flavor2="0">
+      </item>
+      <item path="src/common/coolmemory.cpp" ex="false" tool="1" flavor2="0">
       </item>
       <item path="src/drivers/amd_am79c973.cpp" ex="false" tool="1" flavor2="0">
       </item>
