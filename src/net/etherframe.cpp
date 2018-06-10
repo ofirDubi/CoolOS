@@ -37,7 +37,7 @@ void EtherFrameHandler::Send(common::uint64_t dstMAC_BE,  common::uint8_t * data
 
 
 
-EtherFrameProvider::EtherFrameProvider(amd_am79c973 * backend)
+EtherFrameProvider::EtherFrameProvider(amd_am79c970 * backend)
 : RawDataHandler(backend)
 {
     

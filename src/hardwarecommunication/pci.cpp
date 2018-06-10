@@ -5,7 +5,7 @@
  */
 
 #include <hardwarecommunication/pci.h>
-#include <drivers/amd_am79c973.h>
+#include <drivers/amd_am79c970.h>
 #include <common/coolio.h>
 
 
@@ -14,11 +14,11 @@ using namespace coolOS::drivers;
 using namespace coolOS::hardwarecommunication;
 
 
-
+//constructor, set the command and data ports.
 PeripheralComponentInterconnectController::PeripheralComponentInterconnectController() 
-: dataPort(0xCFC), 
- commandPort(0xCF8)
-{
+: commandPort(0xCF8),
+  dataPort(0xCFC) 
+ {
     
 }
 
@@ -29,8 +29,16 @@ PeripheralComponentInterconnectController::~PeripheralComponentInterconnectContr
 uint32_t PeripheralComponentInterconnectController::Read(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset) {
     //construct identifier to send to PCI controller
     
-    //check why id is like that
-    uint32_t id = 
+    /*configuration space address structure:
+     * 0-1 bits = always 0 
+    *  2-7 bits = register offset
+     * 8-10 function number
+     * 11-15 device number
+     * 16-23 bus number
+     * 24 -30 reserved
+     * 31 - always one for active registers
+    */
+    uint32_t CONFIG_ADDRESS = 
             0x1 << 31 
             | ((bus & 0xff) << 16)
             | ((device & 0x1F) << 11)
@@ -38,20 +46,27 @@ uint32_t PeripheralComponentInterconnectController::Read(uint16_t bus, uint16_t 
             | (registeroffset & 0xFC);
     
      //will connect to the wanted bus->device->function
-    commandPort.Write(id);
+    commandPort.Write(CONFIG_ADDRESS);
     
     //read the results from the data port
     uint32_t result = dataPort.Read();
-    //why
+    
+    /* 
+     * the registers are 32 bit long - 4 bytes. if we want to read an entire register,
+     * our register offset will be dividable by 4. in order to read a specific part of a register, 
+     * we shift the result by a byte for each reminder of the register offset divided by 4
+     * if we don't do that, the result will contain a part of the next register. 
+     */
     return result >> (8 * (registeroffset % 4));
     
 }
 
+//write to a configuration space register 
 void PeripheralComponentInterconnectController::Write(uint16_t bus, uint16_t device, uint16_t function, uint32_t registeroffset, uint32_t value) {
     //construct identifier to send to PCI controller
     
-    //check why id is like that
-    uint32_t id = 
+    //configuration space address structure
+    uint32_t CONFIG_ADDRESS = 
             0x1 << 31 
             | ((bus & 0xff) << 16)
             | ((device & 0x1F) << 11)
@@ -59,7 +74,7 @@ void PeripheralComponentInterconnectController::Write(uint16_t bus, uint16_t dev
             | (registeroffset & 0xFC);
     
     //will connect to the wanted bus->device->function
-    commandPort.Write(id);
+    commandPort.Write(CONFIG_ADDRESS);
     
     //write to the device
     dataPort.Write(value);
@@ -68,32 +83,36 @@ void PeripheralComponentInterconnectController::Write(uint16_t bus, uint16_t dev
 }
 //checks if a device has multiple functions or not
 bool PeripheralComponentInterconnectController::DeviceHasFunctions (uint16_t bus, uint16_t device){
-    //the seventh bit of the 0x0E offset tells us if there are multiple functions to the device or not
+    //the seventh bit of the 0x0E register tells us if there are multiple functions to the device or not
     return Read(bus, device, 0, 0x0E) & (1<<7);
 }
 
 
-
+//scan the PCI and search for devices
 void PeripheralComponentInterconnectController::SelectDrivers(coolOS::drivers::DriverManager* driverManager, coolOS::hardwarecommunication::InterruptManager * interruptManager){
     //iterate the buses
     for(int bus = 0; bus < 8; bus ++){
         //iterate the devices
-        for(int device = 0; device < 8; device ++){
+        for(int device = 0; device < 32; device ++){
             
             int numFunctions = DeviceHasFunctions(bus, device)? 8 : 1;
             //iterate the functions
             for(int function = 0; function <numFunctions; function ++){
                 
-                PeripheralComponentInterconnectDeviceDescriptor dev = GetDeviceDescriptor(bus, device, function);
+                //get the device's function configuration space layout
+                ConfigurationSpaceLayout dev = GetDeviceDescriptor(bus, device, function);
+                
+                //check if this function exists
                 if(dev.vendor_id == 0x0000 || dev.vendor_id == 0xFFFF){
                     continue;
                 }
                 
-                
+                //get the device's BARs
                 for(int barNum = 0; barNum < 6; barNum++){
-                    BaseAddressRegister bar = GetBaseAddressRegister(bus, device, function, barNum, interruptManager);
+                    BaseAddressRegister bar = GetBaseAddressRegister(bus, device, function, barNum);
+                    //add an IO BAR to the IOBARAddress variable
                     if(bar.address && (bar.type == InputOutput)){
-                        dev.portBase = (uint32_t)bar.address;
+                        dev.IOBARAddress = (uint32_t)bar.address;
                     }
                    
                 }
@@ -101,7 +120,7 @@ void PeripheralComponentInterconnectController::SelectDrivers(coolOS::drivers::D
                 if(driver != 0){
                     driverManager->AddDriver(driver);
                 }
-                
+                //print device data
                 printf("PCI BUS ");
                 printfHex(bus & 0xFF);
                 
@@ -119,50 +138,54 @@ void PeripheralComponentInterconnectController::SelectDrivers(coolOS::drivers::D
                 printfHex((dev.device_id & 0xff00)>>8);
                 printfHex(dev.device_id & 0xff);
                 
-                
-                
-                
+
                 printf("\n");
                 
-               
-                
-                
+
             }
         }
     }
 }
 
-
-BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressRegister                          //change to int
-                                                            (uint16_t bus, uint16_t device, uint16_t function, int16_t barNum, InterruptManager * interrupManager){
+//receive a base address register
+BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressRegister                       
+                                                            (uint16_t bus, uint16_t device, uint16_t function, int16_t barNum ){
     BaseAddressRegister result;
-    //header type is - 00(32 bit), 01(20 bit), 10 (64 bit)
+    //header type is - 00(standard, 32-bit), 01(PCI-to-PCI, 32 bit), 10 (PCI-to-PC Card, 64 bit)
     uint32_t headertype = Read(bus, device, function, 0x0E) & 0x7F;
     
-    int maxBARs = 6 - (4*headertype);
+   /*the standard header has 6 bars, the rest have 2 bars, 
+    * but we cant read the PCI-to-PC Card BAR with the same method*/
+    int maxBARs = 6-4*headertype;
     
     if(barNum >= maxBARs){
         return result;
     }
     
+    //read the BAR from the configuration space
     uint32_t bar_value = Read(bus, device, function, 0x10 + 4*barNum);
+    
+    //determine the bar's type
     result.type = (bar_value & 0x1) ? InputOutput : MemoryMapping;
     
-    
-    uint32_t temp;
+    //memory mapping - not implemented
     if(result.type == MemoryMapping){
-       /* switch((bar_value >>1) & 0x3 ){
+        switch((bar_value >>1) & 0x3 ){
             //complete later
             case 0: //32 bit mode
-                
-            case 1: //20 bit mode 
-            case 2: //64 bit mode
+                result.address = (uint8_t*)(bar_value & ~0xF); //16-bit aligned
+                break;
+            
+            case 1: break;//20 bit mode - deprecated 
+            case 2: break;/*64 bit mode - need to read the next bar for the full address
+            not implemented in our 32-bit system*/
                 
         }
         result.prefetchable = ((bar_value >>3 )& 0x1) ==0x1; //it is prefetchable
-        */ 
+        
     }   
     else{ //InputOoutput
+        //make a 4-bit alignment
         result.address = (uint8_t*)(bar_value & ~0x3);
         result.prefetchable = false;
     }
@@ -170,17 +193,17 @@ BaseAddressRegister PeripheralComponentInterconnectController::GetBaseAddressReg
     
 }
 
-
-Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponentInterconnectDeviceDescriptor dev, InterruptManager * interruptManager){
+//attach driver to compatible devices
+Driver* PeripheralComponentInterconnectController::GetDriver(ConfigurationSpaceLayout dev, InterruptManager * interruptManager){
     Driver *driver = 0;
     switch(dev.vendor_id){
         case  0x1022: //AMD
             switch(dev.device_id){
-                case 0x2000: //am79c973 
-                    printf("AMD am79c973");
-                    driver = (Driver*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c973));
+                case 0x2000: //am79c970 
+                    printf("AMD am79c970");
+                    driver = (Driver*)MemoryManager::activeMemoryManager->malloc(sizeof(amd_am79c970));
                     if(driver != 0){
-                        new (driver) amd_am79c973(&dev, interruptManager);
+                        new (driver) amd_am79c970(&dev, interruptManager);
                     }
                     return driver;
                     break;
@@ -203,10 +226,10 @@ Driver* PeripheralComponentInterconnectController::GetDriver(PeripheralComponent
     return 0;
 }
 
-
-PeripheralComponentInterconnectDeviceDescriptor PeripheralComponentInterconnectController::GetDeviceDescriptor
+//insert device data into ConfigurationSpaceLayout structure
+ConfigurationSpaceLayout PeripheralComponentInterconnectController::GetDeviceDescriptor
 (uint16_t bus, uint16_t device, uint16_t function){
-    PeripheralComponentInterconnectDeviceDescriptor result;
+    ConfigurationSpaceLayout result;
     
     
     result.bus = bus;

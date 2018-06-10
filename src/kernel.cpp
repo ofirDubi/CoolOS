@@ -16,14 +16,14 @@
 #include <common/coolio.h>
 #include <syscalls.h>
 
-#include <drivers/amd_am79c973.h>
+#include <drivers/amd_am79c970.h>
 #include <net/etherframe.h>
 #include <net/arp.h>
 #include <net/ipv4.h>
 #include <net/icmp.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
-//#define BOOK_MODE 
+#define BOOK_MODE 
 //#define NET
 //#define WRITE_TO_DRIVE
 using namespace coolOS;
@@ -166,7 +166,6 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     printfHex((heap >> 8) & 0xff);
     printfHex((heap) & 0xff);
     //dynamic memory allocation
-    void * allocated_1 = memoryManager.malloc(1024);
     void * allocated = memoryManager.malloc(1024);
     //print allocated location
     printf("\nallocated: 0x");
@@ -189,6 +188,10 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //insert the mouse driver into the driver manager
     drvManager.AddDriver(&mouse);
     
+    //set up PCI
+    PeripheralComponentInterconnectController PCIController;
+    PCIController.SelectDrivers(&drvManager, &interrupts);
+
     //activate drivers
     drvManager.ActivateAll();
 
@@ -213,9 +216,13 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
 
 #ifndef BOOK_MODE
 
+void print(int len, ...){
+    printf("hi");
+}
+
 
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //receive the 
-    
+    print(1, 2, 3);
     printf("Hello world\n");
     //create Global Descriptor Table
    // GlobalDescriptorTable gdt;
@@ -359,7 +366,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
             | ((uint32_t)subnet2 <<8)  
             | (uint32_t)subnet1 ;
     
-    amd_am79c973* eth0 = (amd_am79c973*)(drvManager.drivers[2]);  
+    amd_am79c970* eth0 = (amd_am79c970*)(drvManager.drivers[2]);  
     
    
     

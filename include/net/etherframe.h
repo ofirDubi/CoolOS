@@ -15,7 +15,7 @@
 #define __COOLOS__NET__ETHERFRAME_H
 
 #include <common/types.h>
-#include <drivers/amd_am79c973.h>
+#include <drivers/amd_am79c970.h>
 #include <memorymanagment.h>
 
 namespace coolOS{
@@ -62,7 +62,7 @@ namespace coolOS{
             
         public:
             
-            EtherFrameProvider(drivers::amd_am79c973 * backend);
+            EtherFrameProvider(drivers::amd_am79c970 * backend);
             ~EtherFrameProvider();
             
             virtual bool OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size);
