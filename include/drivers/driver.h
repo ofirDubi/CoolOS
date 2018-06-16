@@ -32,11 +32,12 @@ namespace coolOS{
         class DriverManager{
         private:
             //an array of drivers
-            Driver* drivers[265];
+            
             // the number of current drivers in the array
             int numDrivers;
 
         public:
+            Driver* drivers[265];
             DriverManager();
             //a function that adds drivers
             void AddDriver(Driver* drv);

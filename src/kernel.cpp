@@ -1,6 +1,5 @@
 
 #include <common/types.h>
-//#include <gdt.h>
 #include <gdt_new.h>
 #include <hardwarecommunication/interrupts.h>
 #include <hardwarecommunication/pci.h>
@@ -191,17 +190,23 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //set up PCI
     PeripheralComponentInterconnectController PCIController;
     PCIController.SelectDrivers(&drvManager, &interrupts);
+       //activate drivers
+      
+     
+    //initiate an amd_am79c970 network card driver
+    amd_am79c970* eth0 = (amd_am79c970*)(drvManager.drivers[2]);
+     drvManager.ActivateAll();
+    eth0->Send((uint8_t*)"Hello Network", 13);
 
-    //activate drivers
-    drvManager.ActivateAll();
 
- 
+interrupts.Activate();
+
     
    
     
     
-    interrupts.Activate();
-    printf("activated interrupts");
+   
+    printf("activated interrupts\n");
     
     
     while(true){ //keep the operating system alive
@@ -385,21 +390,21 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     
     InternetControlMessageProtocol icmp(&ipv4);
     
-    printf("activating interrupts");
+    printf("activating interrupts\n");
    //start accepting interrupts
    interrupts.Activate();
-   printf("interrupts activated");
+   printf("interrupts activated\n");
    
-  printf("\n\n\n\n\n\n\n\n\n");
+  //sprintf("\n\n\n\n\n\n\n\n\n");
   
-  
+   printf("sending ipv4 \n");
   ipv4.Send(gip_be, 0x014, (uint8_t*) "foobar", 6);
   printf("Broadcasting\n\n\n\n\n\n\n\n\n");
    arp.BroadcastMACAddress(gip_be);
   printf("sending icmp\n");
   icmp.RequestEchoReply(gip_be);
   
-  /* 
+  
    printf("ARP: resolving address\n");
    uint64_t ans = arp.Resolve(gip_be);
    
@@ -409,7 +414,7 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
        printf(" ");
    }
    printf("\nfinished resolving\n");
-  */
+  
 #endif
 #ifdef GRAPHICS_MODE
     desktop.Draw(&vga); 
