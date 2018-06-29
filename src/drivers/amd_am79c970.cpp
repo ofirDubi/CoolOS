@@ -18,23 +18,25 @@ using namespace coolOS::common;
 
 
 
-            //should point to ethernet driver
+           
 
-
+//RawDataHandler constructor - set this as the active data_handler
 RawDataHandler::RawDataHandler(amd_am79c970* backend){
     this->backend = backend;
     backend->SetHandler(this);
 }
 
+//stop using this data handler
 RawDataHandler::~RawDataHandler(){
     backend->SetHandler(0);
 }
 
+//do nothing as default
 bool RawDataHandler::OnRawDataReceived(uint8_t* buffer , uint32_t size){
     
 }
 
-
+//send data through the backend driver
 void RawDataHandler::Send(uint8_t * buffer, uint32_t size){
     backend->Send(buffer, size);
 }
@@ -223,6 +225,7 @@ void amd_am79c970::Send(uint8_t* buffer, int size){
         printfHex(buffer[i]);
         printf(" ");
     }
+    printf("\n");
     sendBufferDescr[sendDescriptor].reserved = 0; //not available
     //maybey reserved should be changed to 1
     sendBufferDescr[sendDescriptor].flags2 = 0; //clear error messages
@@ -257,7 +260,7 @@ void amd_am79c970::Receive(){
          
             
             if(data_handler != 0){
-                if(data_handler->OnRawDataReceived(buffer, size)){
+                if(data_handler->OnRawDataReceived(buffer, size)){ //returns false by default
                     //echo
                     Send(buffer, size);
                 }

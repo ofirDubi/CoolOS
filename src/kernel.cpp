@@ -22,7 +22,7 @@
 #include <net/icmp.h>
 //uncomment for gui
 //#define GRAPHICS_MODE
-#define BOOK_MODE 
+#define BOOK_MODE  //This is the kernel mode used in this version of the book 
 //#define NET
 //#define WRITE_TO_DRIVE
 using namespace coolOS;
@@ -130,8 +130,18 @@ extern "C" void callConstructors()
 
 #ifdef BOOK_MODE
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //receive the multiboot structure
-    
-    printf("Hello World :)\n"); // print :)
+  /*  
+    printf("Welcome To: \n"
+"                  _  ____   _____ \n"
+"                 | |/ __ \\ / ____|\n"
+"   ___ ___   ___ | | |  | | (___  \n"
+"  / __/ _ \\ / _ \\| | |  | |\\___ \\ \n"
+" | (_| (_) | (_) | | |__| |____) |\n"
+"  \\___\\___/ \\___/|_|\\____/|_____/ \n"
+"                                                                    "
+"\n\n\nCreated By Ofir Dubi, Wtih Love :)");
+    */
+
         //create Global Descriptor Table
     init_gdt();
     printf("done with gdt\n");
@@ -150,7 +160,8 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     KeyboardDriver keyboard(&interrupts, &kbhandler);
     
     //the size of the memupper points to the start of our kernel code (including our stack)
-    uint32_t* memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
+    uint32_t
+     *  memupper = (uint32_t*)(((size_t)multiboot_structure) + 8);
     
     //the heap starts at 10 MB
     size_t heap = 10*1024*1024; //10 MB
@@ -196,8 +207,11 @@ extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //
     //initiate an amd_am79c970 network card driver
     amd_am79c970* eth0 = (amd_am79c970*)(drvManager.drivers[2]);
      drvManager.ActivateAll();
-    eth0->Send((uint8_t*)"Hello Network", 13);
-
+     
+    //create an Ethernet frame provider that uses our amd_am79c970 driver  
+    EtherFrameProvider etherframe(eth0);
+    //send an Ethernet frame - a braodcast with protocol type of 0x060080 - BE for 0x806, ARP protocol.
+    etherframe.Send(0xFFFFFFFFFFFF, 0x0608, (uint8_t*)"What a Cool Operating System", 28);
 
 interrupts.Activate();
 
@@ -221,9 +235,6 @@ interrupts.Activate();
 
 #ifndef BOOK_MODE
 
-void print(int len, ...){
-    printf("hi");
-}
 
 
 extern "C" void kernelMain(void * multiboot_structure, uint32_t magicnumber){ //receive the 

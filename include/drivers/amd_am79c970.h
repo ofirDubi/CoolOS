@@ -27,14 +27,17 @@ namespace coolOS{
         
         class amd_am79c970;
         
+        //a base class for network stacks
         class RawDataHandler{
         protected:
-            //should point to ethernet driver
+            //The driver that will be used to receive and send data
             amd_am79c970 *  backend;  
         public:
             RawDataHandler(amd_am79c970* backend);
             ~RawDataHandler();
+            //decide what to do when data is received
             virtual bool OnRawDataReceived(common::uint8_t* buffer , common::uint32_t size);
+            //send data through the driver
             void Send(common::uint8_t * buffer, common::uint32_t size);
             
         };
@@ -101,6 +104,7 @@ namespace coolOS{
             common::uint8_t currentRecvBuffer;
             common::uint8_t currentSendBuffer;
             
+            //pointer to the current data handler 
             RawDataHandler* data_handler;
         public:
             //constructor
@@ -119,11 +123,12 @@ namespace coolOS{
             void Send(common::uint8_t* bufer, int count);
             //receive a message from the network card
             void Receive();
-            
+            //set a RawDataHandler
             void SetHandler(RawDataHandler*  data_handler);
             common::uint64_t GetMACAddress();
-            //TODO: change to DHCP protocol
+            //manually set you IP address, we will later change this to DHCP protocol
             void SetIPAddress (common::uint32_t);
+            //get the IP address
             common::uint32_t GetIPAddress();
 
             
